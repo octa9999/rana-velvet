@@ -6,7 +6,7 @@ export function Hero() {
     <section className="relative min-h-[90vh] flex items-center bg-[var(--cream)]">
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-24 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-          {/* Left Content - Text Only */}
+          {/* Left Content - Text */}
           <div className="max-w-xl z-10">
             <div className="flex items-center gap-3 mb-8">
               <span className="w-12 h-[2px] bg-[var(--warm-taupe)]"></span>
@@ -31,28 +31,31 @@ export function Hero() {
                 <ArrowRight className="w-4 h-4" />
               </Link>
               <Link
-                href="/consultation"
+                href="/categories"
                 className="inline-flex items-center justify-center gap-2 bg-transparent border border-[var(--charcoal)] text-[var(--charcoal)] font-[family-name:var(--font-sans)] font-medium px-8 py-4 hover:bg-[var(--charcoal)] hover:text-white transition-colors duration-300"
               >
-                Book Free Consultation
+                Explore Collections
               </Link>
             </div>
           </div>
 
-          {/* Right Visual - Image Container with Overlay Text */}
+          {/* Right Visual - Full Rectangle Image with Overlay Text */}
           <div className="relative hidden lg:block">
-            <div className="aspect-[4/5] rounded-2xl overflow-hidden shadow-2xl">
+            <div className="aspect-[4/5] w-full overflow-hidden">
               <img
-                src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80"
+                src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80"
                 alt="Luxury sofa in modern living room"
                 className="w-full h-full object-cover"
               />
-              {/* Overlay with text */}
-              <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/20 to-transparent flex flex-col justify-end p-10">
-                <span className="font-[family-name:var(--font-sans)] text-sm text-white/80 uppercase tracking-wider mb-2">
-                  New Collection 2025
-                </span>
-                <h3 className="font-[family-name:var(--font-playfair)] text-3xl font-light text-white mb-4">
+              {/* Overlay Text on Image */}
+              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-10">
+                <div className="flex items-center gap-4 mb-3">
+                  <span className="w-8 h-[2px] bg-[var(--gold)]"></span>
+                  <span className="font-[family-name:var(--font-sans)] text-xs text-white/80 uppercase tracking-wider">
+                    New Collection 2025
+                  </span>
+                </div>
+                <h3 className="font-[family-name:var(--font-playfair)] text-3xl font-light text-white mb-2">
                   Premium Velvet Sofas
                 </h3>
                 <p className="font-[family-name:var(--font-sans)] text-sm text-white/70 mb-6 max-w-xs">
@@ -67,9 +70,9 @@ export function Hero() {
                 </Link>
               </div>
             </div>
-            {/* Decorative Elements */}
-            <div className="absolute -bottom-6 -left-6 w-24 h-24 border border-[var(--warm-taupe)]/30 rounded-xl"></div>
-            <div className="absolute -top-4 -right-4 w-20 h-20 bg-[var(--warm-taupe)]/10 rounded-lg"></div>
+            {/* Decorative border element */}
+            <div className="absolute -top-4 -right-4 w-20 h-20 border border-[var(--warm-taupe)]/30 -z-10"></div>
+            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[var(--warm-taupe)]/10 -z-10"></div>
           </div>
         </div>
       </div>
