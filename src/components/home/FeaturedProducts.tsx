@@ -9,6 +9,7 @@ const products = [
     price: 89999,
     category: "Bedroom",
     href: "/products/velvet-royale-bed",
+    image: "https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=600&q=80",
   },
   {
     id: "2",
@@ -17,6 +18,7 @@ const products = [
     price: 129999,
     category: "Living Room",
     href: "/products/cloud-comfort-sofa",
+    image: "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=600&q=80",
   },
   {
     id: "3",
@@ -25,6 +27,7 @@ const products = [
     price: 34999,
     category: "Seating",
     href: "/products/elite-ottoman",
+    image: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=600&q=80",
   },
   {
     id: "4",
@@ -33,6 +36,7 @@ const products = [
     price: 12999,
     category: "Curtains",
     href: "/products/imperial-curtains",
+    image: "https://images.unsplash.com/photo-1513694203232-719a280e022f?w=600&q=80",
   },
 ];
 
@@ -71,11 +75,13 @@ export function FeaturedProducts() {
               href={product.href}
               className="group bg-white"
             >
-              {/* Image Placeholder */}
-              <div className="aspect-[3/4] bg-[var(--light-stone)] mb-6 overflow-hidden">
-                <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#E8E6E1] to-[#D4D0C8] group-hover:scale-105 transition-transform duration-700">
-                  <span className="text-4xl opacity-40">{product.category === "Bedroom" ? "🛏️" : product.category === "Living Room" ? "🛋️" : product.category === "Seating" ? "🪑" : "🪟"}</span>
-                </div>
+              {/* Image */}
+              <div className="aspect-[3/4] bg-[var(--light-stone)] mb-6 overflow-hidden rounded-lg">
+                <img
+                  src={product.image}
+                  alt={product.name}
+                  className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
+                />
               </div>
               {/* Product Info */}
               <div className="px-2">

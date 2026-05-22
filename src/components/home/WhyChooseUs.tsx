@@ -38,7 +38,7 @@ export function WhyChooseUs() {
           {features.map((feature, index) => (
             <div key={index} className="text-center">
               <div className="w-16 h-16 mx-auto mb-6 rounded-full bg-[var(--cream)] flex items-center justify-center">
-                <Check className="w-8 h-8 text-[var(--warm-taupe)]" />
+                <Check className="w-8 h-8 text-[var(--warm-taupe)]" strokeWidth={1.5} />
               </div>
               <h3 className="font-[family-name:var(--font-playfair)] text-xl font-medium text-[var(--charcoal)] mb-3">
                 {feature.title}

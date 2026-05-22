@@ -6,37 +6,31 @@ const collections = [
     title: "Bedroom Furniture",
     description: "Transform your sanctuary with our curated bedroom pieces",
     href: "/categories/bedroom",
-    icon: "🛏️",
   },
   {
     title: "Living Room",
     description: "Create inviting spaces for family and guests",
     href: "/categories/living-room",
-    icon: "🛋️",
   },
   {
     title: "Sofas & Seating",
     description: "Comfort meets elegance in every stitch",
     href: "/categories/sofas",
-    icon: "🪑",
   },
   {
     title: "Curtains & Fabrics",
     description: "Signature velvets and premium textiles",
     href: "/categories/curtains",
-    icon: "🧵",
   },
   {
     title: "Home Accessories",
     description: "The finishing touches that complete your space",
     href: "/categories/accessories",
-    icon: "✨",
   },
   {
     title: "Custom Furniture",
     description: "Bespoke pieces tailored to your vision",
     href: "/custom-furniture",
-    icon: "🎨",
   },
 ];
 
@@ -62,7 +56,9 @@ export function Collections() {
               href={collection.href}
               className="group bg-[var(--cream)] p-8 lg:p-10 hover:bg-[var(--light-stone)] transition-colors duration-500"
             >
-              <span className="text-5xl mb-6 block">{collection.icon}</span>
+              <div className="w-14 h-14 rounded-full bg-[var(--warm-taupe)]/10 flex items-center justify-center mb-6">
+                <ArrowRight className="w-6 h-6 text-[var(--warm-taupe)] group-hover:translate-x-1 transition-transform" />
+              </div>
               <h3 className="font-[family-name:var(--font-playfair)] text-2xl font-medium text-[var(--charcoal)] mb-3">
                 {collection.title}
               </h3>

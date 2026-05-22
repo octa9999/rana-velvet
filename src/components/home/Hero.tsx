@@ -4,17 +4,6 @@ import { ArrowRight } from "lucide-react";
 export function Hero() {
   return (
     <section className="relative min-h-[90vh] flex items-center bg-[var(--cream)]">
-      {/* Background Pattern */}
-      <div className="absolute inset-0 opacity-[0.03]">
-        <div
-          className="absolute inset-0"
-          style={{
-            backgroundImage: `radial-gradient(circle at 1px 1px, var(--charcoal) 1px, transparent 0)`,
-            backgroundSize: "40px 40px",
-          }}
-        />
-      </div>
-
       <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-24 w-full">
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
           {/* Left Content */}
@@ -31,7 +20,7 @@ export function Hero() {
               Feels Like Home
             </h1>
             <p className="font-[family-name:var(--font-sans)] text-lg text-[var(--warm-gray)] leading-relaxed mb-10 max-w-md">
-              Premium furniture & signature velvets crafted since 1960. Experience the difference of true craftsmanship and quality.
+              Premium furniture and signature velvets crafted since 1960. Experience the difference of true craftsmanship and quality.
             </p>
             <div className="flex flex-col sm:flex-row gap-4">
               <Link
@@ -50,16 +39,14 @@ export function Hero() {
             </div>
           </div>
 
-          {/* Right Visual */}
+          {/* Right Visual - Image Container */}
           <div className="relative hidden lg:block">
-            <div className="aspect-[4/5] bg-gradient-to-br from-[#E8E6E1] to-[#D4D0C8] rounded-sm overflow-hidden">
-              <div className="absolute inset-0 flex items-center justify-center">
-                <div className="w-[60%] h-[70%] bg-gradient-to-br from-[#C4A77D]/20 to-[#8B7355]/10 rounded-sm transform rotate-3"></div>
-              </div>
+            <div className="aspect-[4/5] rounded-2xl overflow-hidden bg-gradient-to-br from-[#D4D0C8] to-[#E8E6E1] shadow-2xl">
+              <div className="w-full h-full bg-[url('https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80')] bg-cover bg-center" />
             </div>
             {/* Decorative Elements */}
-            <div className="absolute -bottom-8 -left-8 w-32 h-32 border border-[var(--gold)]/30"></div>
-            <div className="absolute -top-4 -right-4 w-24 h-24 bg-[var(--warm-taupe)]/10"></div>
+            <div className="absolute -bottom-6 -left-6 w-24 h-24 border border-[var(--warm-taupe)]/30 rounded-xl"></div>
+            <div className="absolute -top-4 -right-4 w-20 h-20 bg-[var(--warm-taupe)]/10 rounded-lg"></div>
           </div>
         </div>
       </div>

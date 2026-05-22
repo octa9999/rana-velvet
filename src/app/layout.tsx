@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { LenisProvider } from "@/components/providers/LenisProvider";
 
 const cormorant = Cormorant_Garamond({
   variable: "--font-playfair",
@@ -62,7 +63,7 @@ export default function RootLayout({
   return (
     <html lang="en" className={`${cormorant.variable} ${dmSans.variable}`}>
       <body className="min-h-full flex flex-col antialiased bg-[var(--background)] text-[var(--foreground)]">
-        {children}
+        <LenisProvider>{children}</LenisProvider>
       </body>
     </html>
   );
