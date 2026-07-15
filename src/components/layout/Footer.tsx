@@ -1,134 +1,54 @@
-import Link from "next/link";
+"use client";
 
-const footerLinks = {
-  products: [
-    { label: "Bedroom Furniture", href: "/categories/bedroom" },
-    { label: "Living Room", href: "/categories/living-room" },
-    { label: "Sofas & Seating", href: "/categories/sofas" },
-    { label: "Curtains & Fabrics", href: "/categories/curtains" },
-    { label: "Accessories", href: "/categories/accessories" },
-  ],
-  services: [
-    { label: "Custom Furniture", href: "/custom-furniture" },
-    { label: "Free Consultation", href: "/consultation" },
-    { label: "Contact Us", href: "/contact" },
-  ],
-  company: [
-    { label: "About Us", href: "/about" },
-    { label: "Our Collections", href: "/categories" },
-    { label: "Affiliate Program", href: "/affiliate" },
-  ],
-};
+import { useEffect, useState } from "react";
+import Link from "next/link";
+import { ArrowRight } from "lucide-react";
+import { officialContactNote } from "@/lib/storefront";
+import styles from "@/styles/ecommerce.module.css";
 
 export function Footer() {
+  const [settings, setSettings] = useState({
+    business_name: "Rana Velvet",
+    showroom_address: "",
+    business_phone: "",
+  });
+
+  useEffect(() => {
+    fetch("/api/settings")
+      .then((response) => response.json())
+      .then((payload) => setSettings((current) => ({ ...current, ...(payload.settings || {}) })))
+      .catch(() => null);
+  }, []);
+
   return (
-    <footer className="bg-[var(--charcoal)] text-white">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-16 lg:py-24">
-        {/* Top Section */}
-        <div className="grid grid-cols-1 lg:grid-cols-5 gap-12 lg:gap-16 mb-16">
-          {/* Brand Column */}
-          <div className="lg:col-span-2">
-            <Link
-              href="/"
-              className="font-[family-name:var(--font-playfair)] text-3xl font-semibold tracking-tight text-white mb-6 inline-block"
-            >
-              Rana Velvet
-            </Link>
-            <p className="font-[family-name:var(--font-sans)] text-base text-white/60 leading-relaxed max-w-md mb-8">
-              Premium furniture and signature velvets crafted with heritage since 1960. Experience the difference of true craftsmanship and quality.
-            </p>
-            <div className="flex items-center gap-2">
-              <span className="w-12 h-[1px] bg-[var(--gold)]"></span>
-              <span className="font-[family-name:var(--font-sans)] text-sm text-[var(--gold)]">
-                Crafted with heritage since 1960
-              </span>
-            </div>
-          </div>
-
-          {/* Links Columns */}
-          <div className="lg:col-span-3 grid grid-cols-1 sm:grid-cols-3 gap-10">
-            {/* Products */}
-            <div>
-              <h4 className="font-[family-name:var(--font-sans)] text-sm font-semibold uppercase tracking-wider text-white/80 mb-6">
-                Products
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.products.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="font-[family-name:var(--font-sans)] text-sm text-white/60 hover:text-white transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Services */}
-            <div>
-              <h4 className="font-[family-name:var(--font-sans)] text-sm font-semibold uppercase tracking-wider text-white/80 mb-6">
-                Services
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.services.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="font-[family-name:var(--font-sans)] text-sm text-white/60 hover:text-white transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-
-            {/* Company */}
-            <div>
-              <h4 className="font-[family-name:var(--font-sans)] text-sm font-semibold uppercase tracking-wider text-white/80 mb-6">
-                Company
-              </h4>
-              <ul className="space-y-4">
-                {footerLinks.company.map((link) => (
-                  <li key={link.href}>
-                    <Link
-                      href={link.href}
-                      className="font-[family-name:var(--font-sans)] text-sm text-white/60 hover:text-white transition-colors duration-200"
-                    >
-                      {link.label}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </div>
+    <footer className={styles.footer}>
+      <div className={styles.footerTitle}>{settings.business_name}</div>
+      <div className={styles.footerGrid}>
+        <div>
+          <strong>Store details</strong>
+          <p className={styles.muted}>{settings.showroom_address || officialContactNote}</p>
+          {settings.business_phone && <p className={styles.muted}>{settings.business_phone}</p>}
         </div>
-
-        {/* Divider */}
-        <div className="h-[1px] bg-white/10 mb-8"></div>
-
-        {/* Bottom Section */}
-        <div className="flex flex-col lg:flex-row items-center justify-between gap-6">
-          <div className="font-[family-name:var(--font-sans)] text-sm text-white/50 text-center lg:text-left">
-            © 2025 Rana Velvet Furniture. All rights reserved. Crafted with heritage since 1960.
-          </div>
-          <div className="flex items-center gap-6">
-            <Link
-              href="/privacy"
-              className="font-[family-name:var(--font-sans)] text-sm text-white/50 hover:text-white transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className="font-[family-name:var(--font-sans)] text-sm text-white/50 hover:text-white transition-colors"
-            >
-              Terms of Service
-            </Link>
-          </div>
+        <div className={styles.footerLinks}>
+          <Link className={styles.secondaryPill} href="/products">Shop</Link>
+          <Link className={styles.secondaryPill} href="/customize-curtain">Customize Curtain</Link>
+          <Link className={styles.secondaryPill} href="/custom-furniture">Custom Furniture</Link>
+          <Link className={styles.secondaryPill} href="/consultation">Consultation</Link>
+          <Link className={styles.secondaryPill} href="/contact">Contact</Link>
+          <Link className={styles.secondaryPill} href="/shipping">Shipping</Link>
+          <Link className={styles.secondaryPill} href="/returns">Returns</Link>
+          <Link className={styles.secondaryPill} href="/privacy">Privacy</Link>
+          <Link className={styles.secondaryPill} href="/terms">Terms</Link>
         </div>
+        <Link className={styles.primaryPill} href="/contact">
+          <span>Talk With Us</span>
+          <ArrowRight size={15} />
+        </Link>
+      </div>
+      <div className={styles.footerGrid} style={{ marginTop: 20 }}>
+        <p className={styles.muted}>© 2026 {settings.business_name} Furniture. All rights reserved.</p>
+        <p className={styles.muted}>Luxury furniture, curtains, fabrics, custom interiors, and partner support.</p>
+        <Link className={styles.secondaryPill} href="/partners">Interior Designer Partners</Link>
       </div>
     </footer>
   );

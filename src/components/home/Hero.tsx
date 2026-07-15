@@ -1,79 +1,104 @@
+"use client";
+
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
 
 export function Hero() {
+  const [loaded, setLoaded] = useState(false);
+
+  useEffect(() => {
+    setLoaded(true);
+  }, []);
+
   return (
-    <section className="relative min-h-[90vh] flex items-center bg-[var(--cream)]">
-      <div className="max-w-[1400px] mx-auto px-6 lg:px-12 py-24 w-full">
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+    <section className="relative min-h-[85vh] sm:min-h-[90vh] flex items-center bg-[var(--charcoal)] overflow-hidden">
+      {/* Background Image with padding */}
+      <div
+        className="absolute inset-2 sm:inset-4 lg:inset-8 rounded-xl sm:rounded-2xl bg-cover bg-center bg-no-repeat"
+        style={{
+          backgroundImage: "url(/hero.png)",
+          transform: loaded ? "scale(1)" : "scale(1.05)",
+          transition: "transform 1.4s cubic-bezier(0.25, 0.1, 0.25, 1)",
+        }}
+      >
+        {/* Dark overlay */}
+        <div className="absolute inset-0 bg-black/60 rounded-xl sm:rounded-2xl" />
+      </div>
+
+      {/* Content */}
+      <div className="max-w-[1400px] mx-auto px-4 sm:px-6 lg:px-12 py-16 sm:py-24 w-full relative z-10">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 lg:gap-16 items-center">
           {/* Left Content - Text */}
-          <div className="max-w-xl z-10">
-            <div className="flex items-center gap-3 mb-8">
-              <span className="w-12 h-[2px] bg-[var(--warm-taupe)]"></span>
-              <span className="font-[family-name:var(--font-sans)] text-sm font-medium uppercase tracking-[0.2em] text-[var(--warm-taupe)]">
+          <div className="max-w-xl lg:max-w-2xl z-10">
+            {/* Uppercase label - slide in from left */}
+            <div
+              className="flex items-center gap-3 mb-6 sm:mb-10"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? "translateX(0)" : "translateX(-30px)",
+                transition: "all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s",
+              }}
+            >
+              <span className="w-10 sm:w-16 h-[1px] bg-[var(--gold)]" />
+              <span className="label-uppercase text-[var(--gold)] text-xs sm:text-sm">
                 Since 1960
               </span>
             </div>
-            <h1 className="font-[family-name:var(--font-playfair)] text-5xl lg:text-7xl font-light text-[var(--charcoal)] leading-[1.1] mb-6">
+
+            {/* Large serif heading - fade up */}
+            <h1
+              className="font-[family-name:var(--font-playfair)] text-4xl sm:text-5xl lg:text-6xl xl:text-7xl 2xl:text-[5rem] font-light text-white tracking-tight leading-[1.1] sm:leading-[1.05] mb-6 sm:mb-8 lg:mb-10"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? "translateY(0)" : "translateY(40px)",
+                transition: "all 1s cubic-bezier(0.25, 0.1, 0.25, 1) 0.4s",
+              }}
+            >
               Luxury That
               <br />
               Feels Like Home
             </h1>
-            <p className="font-[family-name:var(--font-sans)] text-lg text-[var(--warm-gray)] leading-relaxed mb-10 max-w-md">
+
+            {/* Description - fade up */}
+            <p
+              className="font-[family-name:var(--font-sans)] text-base sm:text-lg lg:text-xl text-white/60 leading-relaxed mb-8 sm:mb-12 lg:mb-14 max-w-md font-light"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? "translateY(0)" : "translateY(30px)",
+                transition: "all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) 0.6s",
+              }}
+            >
               Premium furniture and signature velvets crafted since 1960. Experience the difference of true craftsmanship and quality.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4">
+
+            {/* CTA buttons - fade up staggered */}
+            <div
+              className="flex flex-col sm:flex-row gap-3 sm:gap-4 lg:gap-5"
+              style={{
+                opacity: loaded ? 1 : 0,
+                transform: loaded ? "translateY(0)" : "translateY(30px)",
+                transition: "all 0.8s cubic-bezier(0.25, 0.1, 0.25, 1) 0.8s",
+              }}
+            >
               <Link
                 href="/products"
-                className="inline-flex items-center justify-center gap-2 bg-[var(--charcoal)] text-white font-[family-name:var(--font-sans)] font-medium px-8 py-4 hover:bg-[var(--deep-brown)] transition-colors duration-300"
+                className="inline-flex items-center justify-center gap-2 sm:gap-3 bg-white text-[var(--charcoal)] font-[family-name:var(--font-sans)] text-xs sm:text-sm font-medium uppercase tracking-[0.15em] px-6 sm:px-8 lg:px-12 py-4 sm:py-5 hover:bg-[var(--gold)] transition-all duration-500"
               >
                 Shop Now
-                <ArrowRight className="w-4 h-4" />
+                <ArrowRight className="w-4 h-4 sm:w-5 sm:h-5" />
               </Link>
               <Link
                 href="/categories"
-                className="inline-flex items-center justify-center gap-2 bg-transparent border border-[var(--charcoal)] text-[var(--charcoal)] font-[family-name:var(--font-sans)] font-medium px-8 py-4 hover:bg-[var(--charcoal)] hover:text-white transition-colors duration-300"
+                className="inline-flex items-center justify-center gap-2 sm:gap-3 bg-transparent border border-white/30 text-white font-[family-name:var(--font-sans)] text-xs sm:text-sm font-medium uppercase tracking-[0.15em] px-6 sm:px-8 lg:px-12 py-4 sm:py-5 hover:bg-white hover:text-[var(--charcoal)] transition-all duration-500"
               >
                 Explore Collections
               </Link>
             </div>
           </div>
 
-          {/* Right Visual - Full Rectangle Image with Overlay Text */}
-          <div className="relative hidden lg:block">
-            <div className="aspect-[4/5] w-full overflow-hidden">
-              <img
-                src="https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=900&q=80"
-                alt="Luxury sofa in modern living room"
-                className="w-full h-full object-cover"
-              />
-              {/* Overlay Text on Image */}
-              <div className="absolute bottom-0 left-0 right-0 bg-gradient-to-t from-black/80 via-black/40 to-transparent p-10">
-                <div className="flex items-center gap-4 mb-3">
-                  <span className="w-8 h-[2px] bg-[var(--gold)]"></span>
-                  <span className="font-[family-name:var(--font-sans)] text-xs text-white/80 uppercase tracking-wider">
-                    New Collection 2025
-                  </span>
-                </div>
-                <h3 className="font-[family-name:var(--font-playfair)] text-3xl font-light text-white mb-2">
-                  Premium Velvet Sofas
-                </h3>
-                <p className="font-[family-name:var(--font-sans)] text-sm text-white/70 mb-6 max-w-xs">
-                  Handcrafted with the finest materials for lasting comfort
-                </p>
-                <Link
-                  href="/products/cloud-comfort-sofa"
-                  className="inline-flex items-center gap-2 bg-white text-[var(--charcoal)] font-[family-name:var(--font-sans)] font-medium px-6 py-3 w-fit hover:bg-[var(--cream)] transition-colors duration-300"
-                >
-                  View Product
-                  <ArrowRight className="w-4 h-4" />
-                </Link>
-              </div>
-            </div>
-            {/* Decorative border element */}
-            <div className="absolute -top-4 -right-4 w-20 h-20 border border-[var(--warm-taupe)]/30 -z-10"></div>
-            <div className="absolute -bottom-4 -left-4 w-32 h-32 bg-[var(--warm-taupe)]/10 -z-10"></div>
-          </div>
+          {/* Right side empty */}
+          <div className="hidden lg:block" />
         </div>
       </div>
     </section>

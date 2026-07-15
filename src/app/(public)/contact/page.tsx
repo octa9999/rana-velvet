@@ -1,155 +1,189 @@
+"use client";
+
+import { FormEvent, useState } from "react";
+import Link from "next/link";
+import { ArrowRight, CheckCircle2, Clock, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Phone, Mail, MapPin, Clock } from "lucide-react";
+import { officialContactNote, whatsappHref } from "@/lib/storefront";
+import styles from "@/styles/ecommerce.module.css";
+
+const contactNotes = [
+  {
+    icon: MapPin,
+    title: "Store details",
+    body: officialContactNote,
+  },
+  {
+    icon: Phone,
+    title: "Phone or WhatsApp",
+    body: "Add verified number before launch",
+  },
+  {
+    icon: Mail,
+    title: "Studio email",
+    body: "Add verified email before launch",
+  },
+  {
+    icon: Clock,
+    title: "Showroom hours",
+    body: "Monday to Saturday, 10:00 AM to 8:00 PM",
+  },
+];
 
 export default function ContactPage() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", topic: "Product inquiry", message: "" });
+  const [status, setStatus] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (event: FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setStatus("");
+    setSuccess(false);
+
+    const response = await fetch("/api/inquiries", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, subject: form.topic, email: form.email || "no-email@ranavelvet.local" }),
+    });
+
+    setSubmitting(false);
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null);
+      setStatus(payload?.error || "Message could not be sent. Please try again.");
+      return;
+    }
+
+    setForm({ name: "", email: "", phone: "", topic: "Product inquiry", message: "" });
+    setSuccess(true);
+    setStatus("Your message has been received. Rana Velvet will contact you shortly.");
+  };
+
   return (
-    <>
+    <div className={styles.shell}>
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="py-24 lg:py-32 bg-[var(--cream)]">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <span className="font-[family-name:var(--font-sans)] text-sm font-medium uppercase tracking-[0.2em] text-[var(--warm-taupe)] mb-4 block">
-                Contact Us
-              </span>
-              <h1 className="font-[family-name:var(--font-playfair)] text-4xl lg:text-6xl font-light text-[var(--charcoal)] mb-8">
-                We Would Love to Hear From You
-              </h1>
-              <p className="font-[family-name:var(--font-sans)] text-lg text-[var(--warm-gray)] leading-relaxed">
-                Have a question or want to discuss your project? Reach out to us and our team will get back to you shortly.
+        <section className={`${styles.hero} ${styles.heroCompact}`}>
+          <span className={styles.heroKicker}>Contact Rana Velvet</span>
+          <h1 className={styles.displayTitle}>talk with us</h1>
+          <p className={styles.heroCopy}>
+            Share your room, furniture, fabric, or furnishing requirement with the studio. Our team will guide you with a considered next step.
+          </p>
+        </section>
+
+        <section className={styles.paperSection}>
+          <div className={styles.contentGrid}>
+            <form className={styles.formCard} onSubmit={submit}>
+              <h2>send a message</h2>
+              <div className={styles.formGrid} style={{ marginTop: 28 }}>
+                <label className={styles.field}>
+                  <span>Name</span>
+                  <input
+                    required
+                    value={form.name}
+                    onChange={(event) => setForm({ ...form, name: event.target.value })}
+                    placeholder="Your name"
+                    type="text"
+                  />
+                </label>
+                <label className={styles.field}>
+                  <span>Email</span>
+                  <input
+                    value={form.email}
+                    onChange={(event) => setForm({ ...form, email: event.target.value })}
+                    placeholder="Optional"
+                    type="email"
+                  />
+                </label>
+                <label className={`${styles.field} ${styles.wide}`}>
+                  <span>Phone</span>
+                  <input
+                    required
+                    value={form.phone}
+                    onChange={(event) => setForm({ ...form, phone: event.target.value })}
+                    placeholder="Phone or WhatsApp number"
+                    type="tel"
+                  />
+                </label>
+                <label className={`${styles.field} ${styles.wide}`}>
+                  <span>Topic</span>
+                  <select value={form.topic} onChange={(event) => setForm({ ...form, topic: event.target.value })}>
+                    <option>Product inquiry</option>
+                    <option>Curtain customization</option>
+                    <option>Custom furniture</option>
+                    <option>Order support</option>
+                    <option>Delivery</option>
+                    <option>Other</option>
+                  </select>
+                </label>
+                <label className={`${styles.field} ${styles.wide}`}>
+                  <span>Message</span>
+                  <textarea
+                    required
+                    rows={7}
+                    value={form.message}
+                    onChange={(event) => setForm({ ...form, message: event.target.value })}
+                    placeholder="Tell us about the space, product, measurements, or design direction you have in mind."
+                  />
+                </label>
+              </div>
+
+              <button className={styles.primaryPill} disabled={submitting} style={{ marginTop: 24, width: "100%" }} type="submit">
+                {submitting ? "Sending..." : "Send Inquiry"} <ArrowRight size={15} />
+              </button>
+
+              {status && (
+                <p className={success ? styles.successNote : styles.errorNote}>
+                  {success && <CheckCircle2 size={16} />}
+                  {status}
+                </p>
+              )}
+            </form>
+
+            <aside className={styles.summaryCard}>
+              <span className={styles.heroKicker}>Studio desk</span>
+              <h2>Faisalabad, made personal</h2>
+              <p className={styles.muted} style={{ marginTop: 14, lineHeight: 1.55 }}>
+                For product questions, room styling, custom furniture, fabric selection, and showroom visits, send the details here or book a dedicated consultation.
               </p>
-            </div>
+              <div className={styles.summaryRows}>
+                {contactNotes.map((item) => {
+                  const Icon = item.icon;
+                  return (
+                    <div key={item.title}>
+                      <span style={{ display: "inline-flex", alignItems: "center", gap: 10 }}>
+                        <Icon size={17} />
+                        {item.title}
+                      </span>
+                      <strong>{item.body}</strong>
+                    </div>
+                  );
+                })}
+              </div>
+              <Link className={styles.secondaryPill} href="/consultation" style={{ width: "100%" }}>
+                Book a consultation <ArrowRight size={15} />
+              </Link>
+              <Link className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I need help with a website inquiry.")} style={{ width: "100%", marginTop: 10 }}>
+                WhatsApp
+              </Link>
+            </aside>
           </div>
         </section>
 
-        {/* Contact Info & Form */}
-        <section className="py-24 lg:py-32 bg-white">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              {/* Contact Info */}
-              <div>
-                <h2 className="font-[family-name:var(--font-playfair)] text-2xl font-light text-[var(--charcoal)] mb-10">
-                  Get in Touch
-                </h2>
-                <div className="space-y-8">
-                  <div className="flex items-start gap-5">
-                    <div className="w-12 h-12 bg-[var(--cream)] rounded-full flex items-center justify-center flex-shrink-0">
-                      <MapPin className="w-5 h-5 text-[var(--warm-taupe)]" />
-                    </div>
-                    <div>
-                      <h3 className="font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)] mb-1">
-                        Visit Our Showroom
-                      </h3>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        123 Furniture Street<br />
-                        Karachi, Pakistan
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-5">
-                    <div className="w-12 h-12 bg-[var(--cream)] rounded-full flex items-center justify-center flex-shrink-0">
-                      <Phone className="w-5 h-5 text-[var(--warm-taupe)]" />
-                    </div>
-                    <div>
-                      <h3 className="font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)] mb-1">
-                        Call Us
-                      </h3>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        +92 300 123 4567
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-5">
-                    <div className="w-12 h-12 bg-[var(--cream)] rounded-full flex items-center justify-center flex-shrink-0">
-                      <Mail className="w-5 h-5 text-[var(--warm-taupe)]" />
-                    </div>
-                    <div>
-                      <h3 className="font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)] mb-1">
-                        Email Us
-                      </h3>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        info@ranavelvet.com
-                      </p>
-                    </div>
-                  </div>
-                  <div className="flex items-start gap-5">
-                    <div className="w-12 h-12 bg-[var(--cream)] rounded-full flex items-center justify-center flex-shrink-0">
-                      <Clock className="w-5 h-5 text-[var(--warm-taupe)]" />
-                    </div>
-                    <div>
-                      <h3 className="font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)] mb-1">
-                        Business Hours
-                      </h3>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        Monday - Saturday: 10:00 AM - 8:00 PM<br />
-                        Sunday: 12:00 PM - 6:00 PM
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Contact Form */}
-              <div className="bg-[var(--cream)] p-8 lg:p-12">
-                <h2 className="font-[family-name:var(--font-playfair)] text-2xl font-light text-[var(--charcoal)] mb-8">
-                  Send us a Message
-                </h2>
-                <form className="space-y-6">
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 bg-white border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Email
-                    </label>
-                    <input
-                      type="email"
-                      className="w-full px-4 py-3 bg-white border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                      placeholder="your@email.com"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Phone
-                    </label>
-                    <input
-                      type="tel"
-                      className="w-full px-4 py-3 bg-white border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                      placeholder="+92 300 000 0000"
-                    />
-                  </div>
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Message
-                    </label>
-                    <textarea
-                      rows={5}
-                      className="w-full px-4 py-3 bg-white border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors resize-none"
-                      placeholder="How can we help you?"
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-[var(--charcoal)] text-white font-[family-name:var(--font-sans)] font-medium py-4 hover:bg-[var(--deep-brown)] transition-colors duration-300"
-                  >
-                    Send Message
-                  </button>
-                </form>
-              </div>
-            </div>
+        <section className={styles.darkBand}>
+          <div className={styles.sectionHead}>
+            <p>For complete interiors, bring measurements, room photos, fabric references, or inspiration images when you visit the showroom.</p>
+            <h2>studio care</h2>
+            <Link className={styles.secondaryPill} href="/products">
+              View Collection <ArrowRight size={15} />
+            </Link>
           </div>
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

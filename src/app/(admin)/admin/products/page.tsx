@@ -1,252 +1,299 @@
 "use client";
 
-import { useState } from "react";
-import { Plus, Search, Edit, Trash2, MoreVertical, Eye } from "lucide-react";
+import { useEffect, useMemo, useRef, useState } from "react";
+import Link from "next/link";
+import { Edit3, Eye, ImagePlus, PackagePlus, Search, SlidersHorizontal, Trash2 } from "lucide-react";
+import { AdminProduct, adminProducts, formatAdminPrice, type AdminCategory } from "@/lib/admin-data";
 
-const mockProducts = [
-  {
-    id: "1",
-    name: "Velvet Royale Bed",
-    slug: "velvet-royale-bed",
-    category: "Bedroom",
-    price: 89999,
-    stock: 12,
-    status: "active",
-    featured: true,
-    image: null,
-  },
-  {
-    id: "2",
-    name: "Cloud Comfort Sofa",
-    slug: "cloud-comfort-sofa",
-    category: "Living Room",
-    price: 129999,
-    stock: 8,
-    status: "active",
-    featured: true,
-    image: null,
-  },
-  {
-    id: "3",
-    name: "Elite Ottoman",
-    slug: "elite-ottoman",
-    category: "Seating",
-    price: 34999,
-    stock: 15,
-    status: "active",
-    featured: false,
-    image: null,
-  },
-  {
-    id: "4",
-    name: "Imperial Curtains",
-    slug: "imperial-curtains",
-    category: "Curtains",
-    price: 12999,
-    stock: 30,
-    status: "active",
-    featured: false,
-    image: null,
-  },
-  {
-    id: "5",
-    name: "Royal Armchair",
-    slug: "royal-armchair",
-    category: "Seating",
-    price: 54999,
-    stock: 0,
-    status: "draft",
-    featured: false,
-    image: null,
-  },
-];
-
-function formatPrice(price: number) {
-  return `Rs. ${price.toLocaleString("en-PK")}`;
-}
+const emptyProduct: AdminProduct = {
+  id: "",
+  name: "",
+  slug: "",
+  category: "Home Decor",
+  subcategory: "Decor",
+  price: 0,
+  stock: 0,
+  reserved: 0,
+  status: "draft",
+  featured: false,
+  image: "",
+  sku: "",
+  material: "",
+  color: "",
+};
 
 export default function AdminProductsPage() {
-  const [searchQuery, setSearchQuery] = useState("");
+  const [products, setProducts] = useState(adminProducts);
+  const [query, setQuery] = useState("");
+  const [status, setStatus] = useState("all");
+  const [editing, setEditing] = useState<AdminProduct | null>(null);
+  const [categories, setCategories] = useState<AdminCategory[]>([]);
+  const [notice, setNotice] = useState("");
+  const imageInputRef = useRef<HTMLInputElement | null>(null);
 
-  const filteredProducts = mockProducts.filter((product) =>
-    product.name.toLowerCase().includes(searchQuery.toLowerCase())
-  );
+  const loadProducts = () =>
+    fetch("/api/admin/products")
+      .then((response) => response.json())
+      .then((payload) => {
+        if (Array.isArray(payload.products)) setProducts(payload.products);
+      })
+      .catch(() => setNotice("Could not load Supabase products. Check admin login and database access."));
+
+  useEffect(() => {
+    loadProducts();
+    fetch("/api/admin/categories")
+      .then((response) => response.json())
+      .then((payload) => {
+        if (Array.isArray(payload.categories)) setCategories(payload.categories);
+      })
+      .catch(() => null);
+  }, []);
+
+  const filteredProducts = useMemo(() => {
+    return products.filter((product) => {
+      const matchesQuery = [product.name, product.sku, product.category].join(" ").toLowerCase().includes(query.toLowerCase());
+      const matchesStatus = status === "all" || product.status === status;
+      return matchesQuery && matchesStatus;
+    });
+  }, [products, query, status]);
+
+  const saveProduct = async () => {
+    if (!editing) return;
+    const normalized = {
+      ...editing,
+      id: editing.id || `rv-${Date.now()}`,
+      slug: editing.slug || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
+      sku: editing.sku || `RV-${Date.now().toString().slice(-5)}`,
+      image: editing.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+      reserved: editing.reserved || 0,
+    };
+    const response = await fetch("/api/admin/products", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(normalized),
+    });
+
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null);
+      setNotice(payload?.error || "Product saved locally, but Supabase rejected the write.");
+    }
+
+    await loadProducts();
+    setNotice("Product saved to Supabase.");
+    setEditing(null);
+  };
+
+  const removeProduct = async (id: string) => {
+    const product = products.find((item) => item.id === id);
+    if (!window.confirm(`Delete ${product?.name || "this product"}? This cannot be undone in production.`)) return;
+    await fetch(`/api/admin/products/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => null);
+    setProducts((current) => current.filter((item) => item.id !== id));
+    setNotice(`${product?.name || "Product"} deleted from Supabase.`);
+  };
+
+  const uploadProductImage = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file || !editing) return;
+    const form = new FormData();
+    form.append("file", file);
+    form.append("bucket", "products");
+    const response = await fetch("/api/admin/modules/media", { method: "POST", body: form });
+    const payload = await response.json().catch(() => null);
+    if (!response.ok) {
+      setNotice(payload?.error || "Image upload failed.");
+      return;
+    }
+    setEditing({ ...editing, image: payload.row.url });
+    setNotice("Image uploaded and attached to this product draft.");
+    event.target.value = "";
+  };
 
   return (
-    <div>
-      {/* Header */}
-      <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+    <div className="space-y-5">
+      <section className="flex flex-col gap-4 lg:flex-row lg:items-end lg:justify-between">
         <div>
-          <h1 className="font-[family-name:var(--font-playfair)] text-3xl font-light text-[var(--charcoal)]">
-            Products
-          </h1>
-          <p className="font-[family-name:var(--font-sans)] text-sm text-[var(--warm-gray)] mt-1">
-            Manage your product inventory and listings
+          <p className="mb-2 text-xs font-semibold uppercase tracking-[0.22em] text-[#0d6b3f]">Catalog CMS</p>
+          <h1 className="font-[family-name:var(--font-playfair)] text-4xl font-semibold tracking-tight text-[#111] sm:text-5xl">Products</h1>
+          <p className="mt-2 max-w-2xl text-sm text-neutral-500">
+            Add products, assign categories, manage stock, variants, featured status and images. Writes go to Supabase when credentials are configured.
           </p>
+          {notice && <p className="mt-2 text-xs font-semibold text-[#0d6b3f]">{notice}</p>}
         </div>
-        <button className="inline-flex items-center gap-2 bg-[var(--charcoal)] text-white font-[family-name:var(--font-sans)] text-sm font-medium px-5 py-3 hover:bg-[var(--deep-brown)] transition-colors">
-          <Plus className="w-4 h-4" />
+        <button
+          onClick={() => setEditing(emptyProduct)}
+          className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0d6b3f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20"
+        >
+          <PackagePlus className="h-4 w-4" />
           Add Product
         </button>
-      </div>
+      </section>
 
-      {/* Search & Filters */}
-      <div className="bg-white border border-[var(--border)] p-4 mb-6">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="relative flex-1">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--warm-gray)]" />
+      <section className="rounded-[28px] bg-white p-4 shadow-sm">
+        <div className="grid gap-3 lg:grid-cols-[1fr_180px_180px]">
+          <label className="relative">
+            <Search className="absolute left-4 top-1/2 h-4 w-4 -translate-y-1/2 text-neutral-400" />
             <input
-              type="text"
-              placeholder="Search products..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="w-full pl-12 pr-4 py-3 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm focus:outline-none focus:border-[var(--warm-taupe)]"
+              value={query}
+              onChange={(event) => setQuery(event.target.value)}
+              className="h-14 w-full rounded-[20px] bg-[#f4f6f3] pl-11 pr-4 text-sm outline-none ring-1 ring-black/5 focus:ring-[#0d6b3f]/30"
+              placeholder="Search by product, SKU, category..."
             />
-          </div>
-          <select className="px-4 py-3 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm focus:outline-none focus:border-[var(--warm-taupe)]">
-            <option value="">All Categories</option>
-            <option value="bedroom">Bedroom</option>
-            <option value="living-room">Living Room</option>
-            <option value="seating">Seating</option>
-            <option value="curtains">Curtains</option>
-          </select>
-          <select className="px-4 py-3 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm focus:outline-none focus:border-[var(--warm-taupe)]">
-            <option value="">All Status</option>
+          </label>
+          <select
+            value={status}
+            onChange={(event) => setStatus(event.target.value)}
+            className="h-14 rounded-[20px] bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
+          >
+            <option value="all">All status</option>
             <option value="active">Active</option>
             <option value="draft">Draft</option>
+            <option value="archived">Archived</option>
           </select>
+          <button className="inline-flex h-14 items-center justify-center gap-2 rounded-[20px] border border-black/10 px-4 text-sm font-semibold">
+            <SlidersHorizontal className="h-4 w-4" />
+            Filters
+          </button>
         </div>
-      </div>
+      </section>
 
-      {/* Products Table */}
-      <div className="bg-white border border-[var(--border)] overflow-hidden">
-        <div className="overflow-x-auto">
-          <table className="w-full">
-            <thead>
-              <tr className="border-b border-[var(--border)] bg-[var(--cream)]">
-                <th className="text-left px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Product
-                </th>
-                <th className="text-left px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Category
-                </th>
-                <th className="text-left px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Price
-                </th>
-                <th className="text-left px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Stock
-                </th>
-                <th className="text-left px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Status
-                </th>
-                <th className="text-left px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Featured
-                </th>
-                <th className="text-right px-6 py-4 font-[family-name:var(--font-sans)] text-sm font-semibold text-[var(--charcoal)]">
-                  Actions
-                </th>
-              </tr>
-            </thead>
-            <tbody>
-              {filteredProducts.map((product) => (
-                <tr key={product.id} className="border-b border-[var(--border)] hover:bg-[var(--cream)]/50">
-                  <td className="px-6 py-4">
-                    <div className="flex items-center gap-4">
-                      <div className="w-12 h-12 bg-[var(--cream)] rounded flex items-center justify-center">
-                        {product.image ? (
-                          <img src={product.image} alt="" className="w-full h-full object-cover" />
-                        ) : (
-                          <span className="text-lg">🛏️</span>
-                        )}
-                      </div>
-                      <div>
-                        <p className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)]">
-                          {product.name}
-                        </p>
-                        <p className="font-[family-name:var(--font-sans)] text-xs text-[var(--warm-gray)]">
-                          /{product.slug}
-                        </p>
-                      </div>
-                    </div>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-[family-name:var(--font-sans)] text-sm text-[var(--warm-gray)]">
-                      {product.category}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)]">
-                      {formatPrice(product.price)}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`font-[family-name:var(--font-sans)] text-sm ${
-                      product.stock === 0 ? "text-red-600" : product.stock < 5 ? "text-yellow-600" : "text-[var(--charcoal)]"
-                    }`}>
-                      {product.stock === 0 ? "Out of Stock" : `${product.stock} units`}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    <span className={`inline-block px-2 py-1 rounded text-xs font-medium ${
-                      product.status === "active"
-                        ? "bg-green-100 text-green-800"
-                        : "bg-gray-100 text-gray-800"
-                    }`}>
-                      {product.status}
-                    </span>
-                  </td>
-                  <td className="px-6 py-4">
-                    {product.featured ? (
-                      <span className="inline-flex items-center gap-1 text-xs font-medium text-[var(--gold)]">
-                        ★ Featured
-                      </span>
-                    ) : (
-                      <span className="text-xs text-[var(--warm-gray)]">-</span>
-                    )}
-                  </td>
-                  <td className="px-6 py-4">
-                    <div className="flex items-center justify-end gap-2">
-                      <button className="p-2 text-[var(--warm-gray)] hover:text-[var(--charcoal)] transition-colors">
-                        <Eye className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 text-[var(--warm-gray)] hover:text-[var(--charcoal)] transition-colors">
-                        <Edit className="w-4 h-4" />
-                      </button>
-                      <button className="p-2 text-red-600 hover:text-red-700 transition-colors">
-                        <Trash2 className="w-4 h-4" />
-                      </button>
-                    </div>
-                  </td>
-                </tr>
+      <section className="overflow-hidden rounded-[28px] bg-white shadow-sm">
+        <div className="hidden grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.8fr_120px] border-b border-black/5 px-5 py-4 text-xs font-semibold uppercase tracking-[0.14em] text-neutral-400 lg:grid">
+          <span>Product</span>
+          <span>Category</span>
+          <span>Price</span>
+          <span>Stock</span>
+          <span>Status</span>
+          <span className="text-right">Actions</span>
+        </div>
+
+        <div className="divide-y divide-black/5">
+          {filteredProducts.map((product) => (
+            <div key={product.id} className="grid gap-4 p-4 transition hover:bg-[#f8faf7] lg:grid-cols-[1.6fr_1fr_0.7fr_0.7fr_0.8fr_120px] lg:items-center lg:px-5">
+              <div className="flex items-center gap-4">
+                <img src={product.image} alt={product.name} className="h-16 w-16 rounded-2xl object-cover" />
+                <div>
+                  <p className="font-semibold text-[#111]">{product.name}</p>
+                  <p className="text-xs text-neutral-500">{product.sku} - /{product.slug}</p>
+                </div>
+              </div>
+              <div>
+                <p className="text-sm font-semibold">{product.category}</p>
+                <p className="text-xs text-neutral-500">{product.subcategory}</p>
+              </div>
+              <p className="text-sm font-semibold">{formatAdminPrice(product.price)}</p>
+              <div>
+                <p className="text-sm font-semibold">{product.stock - product.reserved} available</p>
+                <p className="text-xs text-neutral-500">{product.reserved} reserved</p>
+              </div>
+              <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${product.status === "active" ? "bg-[#e5f4ec] text-[#0d6b3f]" : "bg-neutral-100 text-neutral-500"}`}>
+                {product.status}
+              </span>
+              <div className="flex items-center justify-end gap-1">
+                <Link href={`/products/${product.slug}`} className="rounded-xl p-2 text-neutral-500 hover:bg-[#eef5f1] hover:text-[#0d6b3f]" aria-label={`View ${product.name}`}>
+                  <Eye className="h-4 w-4" />
+                </Link>
+                <button onClick={() => setEditing(product)} className="rounded-xl p-2 text-neutral-500 hover:bg-[#eef5f1] hover:text-[#0d6b3f]" type="button" aria-label={`Edit ${product.name}`}>
+                  <Edit3 className="h-4 w-4" />
+                </button>
+                <button onClick={() => removeProduct(product.id)} className="rounded-xl p-2 text-neutral-500 hover:bg-red-50 hover:text-red-600" type="button" aria-label={`Delete ${product.name}`}>
+                  <Trash2 className="h-4 w-4" />
+                </button>
+              </div>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {editing && (
+        <div className="fixed inset-0 z-[80] grid place-items-center bg-black/40 p-4 backdrop-blur-sm">
+          <div className="max-h-[92vh] w-full max-w-3xl overflow-y-auto rounded-[30px] bg-white p-6 shadow-2xl">
+            <div className="mb-6 flex items-start justify-between gap-4">
+              <div>
+                <p className="text-xs font-semibold uppercase tracking-[0.22em] text-[#0d6b3f]">Product editor</p>
+                <h2 className="font-[family-name:var(--font-playfair)] text-4xl font-semibold">Create / Edit Product</h2>
+              </div>
+              <button onClick={() => setEditing(null)} className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold">Close</button>
+            </div>
+
+            <div className="grid gap-4 sm:grid-cols-2">
+              {[
+                ["name", "Product name"],
+                ["slug", "Slug"],
+                ["sku", "SKU"],
+                ["material", "Material"],
+                ["color", "Color"],
+                ["image", "Image URL"],
+              ].map(([key, label]) => (
+                <label key={key} className={key === "image" ? "sm:col-span-2" : ""}>
+                  <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">{label}</span>
+                  <input
+                    value={String(editing[key as keyof AdminProduct] ?? "")}
+                    onChange={(event) => setEditing({ ...editing, [key]: event.target.value })}
+                    className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5 focus:ring-[#0d6b3f]/30"
+                  />
+                </label>
               ))}
-            </tbody>
-          </table>
-        </div>
+              <label>
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Category</span>
+                <select
+                  value={editing.category}
+                  onChange={(event) => setEditing({ ...editing, category: event.target.value })}
+                  className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
+                >
+                  {categories.map((category) => (
+                    <option key={category.id}>{category.name}</option>
+                  ))}
+                </select>
+              </label>
+              <label>
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Status</span>
+                <select
+                  value={editing.status}
+                  onChange={(event) => setEditing({ ...editing, status: event.target.value as AdminProduct["status"] })}
+                  className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
+                >
+                  <option value="active">Active</option>
+                  <option value="draft">Draft</option>
+                  <option value="archived">Archived</option>
+                </select>
+              </label>
+              <label>
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Price</span>
+                <input
+                  type="number"
+                  value={editing.price}
+                  onChange={(event) => setEditing({ ...editing, price: Number(event.target.value) })}
+                  className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
+                />
+              </label>
+              <label>
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Stock</span>
+                <input
+                  type="number"
+                  value={editing.stock}
+                  onChange={(event) => setEditing({ ...editing, stock: Number(event.target.value) })}
+                  className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
+                />
+              </label>
+            </div>
 
-        {/* Pagination */}
-        <div className="px-6 py-4 border-t border-[var(--border)] flex items-center justify-between">
-          <p className="font-[family-name:var(--font-sans)] text-sm text-[var(--warm-gray)]">
-            Showing {filteredProducts.length} of {mockProducts.length} products
-          </p>
-          <div className="flex items-center gap-2">
-            <button className="px-3 py-2 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm text-[var(--charcoal)] disabled:opacity-50" disabled>
-              Previous
-            </button>
-            <button className="px-3 py-2 border border-[var(--border)] bg-[var(--charcoal)] text-white font-[family-name:var(--font-sans)] text-sm">
-              1
-            </button>
-            <button className="px-3 py-2 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm text-[var(--charcoal)] hover:bg-[var(--cream)]">
-              2
-            </button>
-            <button className="px-3 py-2 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm text-[var(--charcoal)] hover:bg-[var(--cream)]">
-              3
-            </button>
-            <button className="px-3 py-2 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm text-[var(--charcoal)] hover:bg-[var(--cream)]">
-              Next
-            </button>
+            <div className="mt-6 flex flex-col gap-3 sm:flex-row sm:justify-between">
+              <button
+                className="inline-flex items-center justify-center gap-2 rounded-2xl border border-dashed border-black/20 px-5 py-4 text-sm font-semibold text-neutral-500"
+                type="button"
+                onClick={() => imageInputRef.current?.click()}
+              >
+                <ImagePlus className="h-4 w-4" />
+                Upload images via Supabase Storage
+              </button>
+              <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={uploadProductImage} />
+              <button onClick={saveProduct} className="rounded-2xl bg-[#0d6b3f] px-7 py-4 text-sm font-semibold text-white">
+                Save Product
+              </button>
+            </div>
           </div>
         </div>
-      </div>
+      )}
     </div>
   );
 }

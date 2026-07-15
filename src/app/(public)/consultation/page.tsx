@@ -1,6 +1,11 @@
+"use client";
+
+import { useState } from "react";
+import { ArrowRight, Calendar, CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { Calendar, Clock, Star } from "lucide-react";
+import { referenceNumber, whatsappHref } from "@/lib/storefront";
+import styles from "@/styles/ecommerce.module.css";
 
 const services = [
   "Home Styling Consultation",
@@ -11,202 +16,198 @@ const services = [
   "Color Consultation",
 ];
 
+const timeSlots = ["10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
+
 export default function ConsultationPage() {
+  const [form, setForm] = useState({ name: "", email: "", phone: "", date: "", time: "", service: "", message: "" });
+  const [status, setStatus] = useState("");
+  const [success, setSuccess] = useState(false);
+  const [submitting, setSubmitting] = useState(false);
+
+  const submit = async (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+    setSubmitting(true);
+    setStatus("");
+    setSuccess(false);
+
+    const response = await fetch("/api/appointments", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ ...form, email: form.email || "no-email@ranavelvet.local" }),
+    });
+
+    setSubmitting(false);
+    if (!response.ok) {
+      const payload = await response.json().catch(() => null);
+      setStatus(payload?.error || "Appointment could not be booked. Please try again.");
+      return;
+    }
+
+    setForm({ name: "", email: "", phone: "", date: "", time: "", service: "", message: "" });
+    setSuccess(true);
+    setStatus(`Your consultation request has been received. Reference ${referenceNumber("RV-CN")}. The requested time will be confirmed by the team.`);
+  };
+
   return (
-    <>
+    <div className={styles.shell}>
       <Header />
       <main>
-        {/* Hero Section */}
-        <section className="py-24 lg:py-32 bg-[var(--cream)]">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-            <div className="max-w-3xl mx-auto text-center">
-              <span className="font-[family-name:var(--font-sans)] text-sm font-medium uppercase tracking-[0.2em] text-[var(--warm-taupe)] mb-4 block">
-                Free Consultation
-              </span>
-              <h1 className="font-[family-name:var(--font-playfair)] text-4xl lg:text-6xl font-light text-[var(--charcoal)] mb-8">
-                Book Your Free 30-Minute Session
-              </h1>
-              <p className="font-[family-name:var(--font-sans)] text-lg text-[var(--warm-gray)] leading-relaxed">
-                Our expert designers will help you create the perfect space for your home. Get personalized advice on furniture selection, fabric choices, and interior styling.
+        <section className={`${styles.hero} ${styles.heroCompact}`}>
+          <span className={styles.heroKicker}>Faisalabad showroom</span>
+          <h1 className={styles.displayTitle}>book a consultation</h1>
+          <p className={styles.heroCopy}>
+            Reserve a focused design session for furniture selection, fabric matching, room planning, and custom interior guidance.
+          </p>
+        </section>
+
+        <section className={styles.paperSection}>
+          <div className={styles.contentGrid}>
+            <form className={styles.formCard} onSubmit={submit}>
+              <h2>appointment details</h2>
+              <p className={styles.muted} style={{ margin: "18px 0 28px", lineHeight: 1.45 }}>
+                Share your preferred time and project context. The booking will appear in the admin appointments queue immediately.
               </p>
-            </div>
+
+              <div className={styles.formGrid}>
+                <label className={styles.field}>
+                  <span>Full name</span>
+                  <input
+                    required
+                    value={form.name}
+                    onChange={(event) => setForm({ ...form, name: event.target.value })}
+                    placeholder="Your name"
+                  />
+                </label>
+                <label className={styles.field}>
+                  <span>Email optional</span>
+                  <input
+                    type="email"
+                    value={form.email}
+                    onChange={(event) => setForm({ ...form, email: event.target.value })}
+                    placeholder="Optional"
+                  />
+                </label>
+                <label className={styles.field}>
+                  <span>Phone</span>
+                  <input
+                    required
+                    value={form.phone}
+                    onChange={(event) => setForm({ ...form, phone: event.target.value })}
+                    placeholder="+92 300 000 0000"
+                  />
+                </label>
+                <label className={styles.field}>
+                  <span>Service</span>
+                  <select required value={form.service} onChange={(event) => setForm({ ...form, service: event.target.value })}>
+                    <option value="">Select service</option>
+                    {services.map((service) => (
+                      <option key={service} value={service}>{service}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className={styles.field}>
+                  <span>Preferred date</span>
+                  <input required type="date" value={form.date} onChange={(event) => setForm({ ...form, date: event.target.value })} />
+                </label>
+                <label className={styles.field}>
+                  <span>Preferred time</span>
+                  <select required value={form.time} onChange={(event) => setForm({ ...form, time: event.target.value })}>
+                    <option value="">Select time</option>
+                    {timeSlots.map((slot) => (
+                      <option key={slot} value={slot}>{slot}</option>
+                    ))}
+                  </select>
+                </label>
+                <label className={`${styles.field} ${styles.wide}`}>
+                  <span>Project details</span>
+                  <textarea
+                    value={form.message}
+                    onChange={(event) => setForm({ ...form, message: event.target.value })}
+                    placeholder="Tell us about your room, fabric needs, furniture preferences, or budget."
+                    rows={5}
+                    style={{
+                      border: "1px solid var(--line)",
+                      borderRadius: 28,
+                      background: "white",
+                      padding: 18,
+                      resize: "vertical",
+                      outline: "none",
+                    }}
+                  />
+                </label>
+              </div>
+
+              <button className={styles.primaryPill} type="submit" disabled={submitting} style={{ width: "100%", marginTop: 24 }}>
+                {submitting ? "Booking..." : "Book Consultation"}
+                <ArrowRight size={15} />
+              </button>
+
+              {status && (
+                <div
+                  style={{
+                    marginTop: 18,
+                    display: "flex",
+                    gap: 10,
+                    alignItems: "flex-start",
+                    borderRadius: 24,
+                    background: success ? "#e5f4ec" : "#fff1ee",
+                    color: success ? "#0d6b3f" : "#9f2a1f",
+                    padding: 16,
+                    fontWeight: 800,
+                    lineHeight: 1.35,
+                  }}
+                >
+                  {success && <CheckCircle2 size={18} />}
+                  <span>{status}</span>
+                </div>
+              )}
+            </form>
+
+            <aside className={styles.summaryCard}>
+              <span className={styles.heroKicker}>Tradition & Sophistication</span>
+              <h2>visit the showroom</h2>
+              <p className={styles.muted} style={{ margin: "20px 0 28px", lineHeight: 1.45 }}>
+                Rana Velvet offers original design guidance, handcrafted furniture, fabric consultation, and refined furnishing support from our Faisalabad showroom.
+              </p>
+              <div className={styles.summaryRows}>
+                <div>
+                  <span><MapPin size={15} /> Location</span>
+                  <strong>Verify store location before launch</strong>
+                </div>
+                <div>
+                  <span><Phone size={15} /> Phone</span>
+                  <strong>Verify phone before launch</strong>
+                </div>
+                <div>
+                  <span><Calendar size={15} /> Days</span>
+                  <strong>Mon - Sat</strong>
+                </div>
+                <div>
+                  <span><Clock size={15} /> Hours</span>
+                  <strong>10 AM - 8 PM</strong>
+                </div>
+              </div>
+            </aside>
           </div>
         </section>
 
-        {/* Booking Section */}
-        <section className="py-24 lg:py-32 bg-white">
-          <div className="max-w-[1400px] mx-auto px-6 lg:px-12">
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-16">
-              {/* Booking Form */}
-              <div>
-                <h2 className="font-[family-name:var(--font-playfair)] text-2xl font-light text-[var(--charcoal)] mb-8">
-                  Schedule Your Appointment
-                </h2>
-                <form className="space-y-6">
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Full Name
-                    </label>
-                    <input
-                      type="text"
-                      className="w-full px-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                      placeholder="Your name"
-                    />
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                        Email
-                      </label>
-                      <input
-                        type="email"
-                        className="w-full px-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                        placeholder="your@email.com"
-                      />
-                    </div>
-                    <div>
-                      <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                        Phone
-                      </label>
-                      <input
-                        type="tel"
-                        className="w-full px-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                        placeholder="+92 300 000 0000"
-                      />
-                    </div>
-                  </div>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                        Preferred Date
-                      </label>
-                      <div className="relative">
-                        <Calendar className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--warm-gray)]" />
-                        <input
-                          type="date"
-                          className="w-full pl-12 pr-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors"
-                        />
-                      </div>
-                    </div>
-                    <div>
-                      <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                        Preferred Time
-                      </label>
-                      <div className="relative">
-                        <Clock className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-[var(--warm-gray)]" />
-                        <select className="w-full pl-12 pr-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors appearance-none">
-                          <option value="">Select time</option>
-                          <option value="10:00">10:00 AM</option>
-                          <option value="11:00">11:00 AM</option>
-                          <option value="12:00">12:00 PM</option>
-                          <option value="14:00">2:00 PM</option>
-                          <option value="15:00">3:00 PM</option>
-                          <option value="16:00">4:00 PM</option>
-                          <option value="17:00">5:00 PM</option>
-                          <option value="18:00">6:00 PM</option>
-                        </select>
-                      </div>
-                    </div>
-                  </div>
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Service Interested In
-                    </label>
-                    <select className="w-full px-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors">
-                      <option value="">Select a service</option>
-                      {services.map((service) => (
-                        <option key={service} value={service}>
-                          {service}
-                        </option>
-                      ))}
-                    </select>
-                  </div>
-                  <div>
-                    <label className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)] mb-2 block">
-                      Additional Details
-                    </label>
-                    <textarea
-                      rows={4}
-                      className="w-full px-4 py-3 bg-[var(--cream)] border border-[var(--border)] font-[family-name:var(--font-sans)] text-base text-[var(--charcoal)] focus:outline-none focus:border-[var(--warm-taupe)] transition-colors resize-none"
-                      placeholder="Tell us about your project or requirements..."
-                    />
-                  </div>
-                  <button
-                    type="submit"
-                    className="w-full bg-[var(--charcoal)] text-white font-[family-name:var(--font-sans)] font-medium py-4 hover:bg-[var(--deep-brown)] transition-colors duration-300"
-                  >
-                    Book Appointment
-                  </button>
-                </form>
-              </div>
-
-              {/* Info Side */}
-              <div>
-                <h2 className="font-[family-name:var(--font-playfair)] text-2xl font-light text-[var(--charcoal)] mb-8">
-                  What to Expect
-                </h2>
-                <div className="bg-[var(--cream)] p-8 mb-8">
-                  <h3 className="font-[family-name:var(--font-playfair)] text-xl font-medium text-[var(--charcoal)] mb-6">
-                    Your Free 30-Minute Session Includes:
-                  </h3>
-                  <ul className="space-y-4">
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-[var(--warm-taupe)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-xs">1</span>
-                      </div>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        Personalized walkthrough of our showroom with an expert designer
-                      </p>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-[var(--warm-taupe)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-xs">2</span>
-                      </div>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        Discussion of your vision, preferences, and budget
-                      </p>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-[var(--warm-taupe)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-xs">3</span>
-                      </div>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        Expert recommendations on furniture, fabrics, and styling
-                      </p>
-                    </li>
-                    <li className="flex items-start gap-4">
-                      <div className="w-6 h-6 rounded-full bg-[var(--warm-taupe)] flex items-center justify-center flex-shrink-0 mt-0.5">
-                        <span className="text-white text-xs">4</span>
-                      </div>
-                      <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)]">
-                        No obligation - just honest, professional advice
-                      </p>
-                    </li>
-                  </ul>
-                </div>
-
-                <div className="p-8 border border-[var(--border)]">
-                  <h3 className="font-[family-name:var(--font-playfair)] text-xl font-medium text-[var(--charcoal)] mb-4">
-                    Why Customers Love Our Consultations
-                  </h3>
-                  <div className="flex gap-1 mb-4">
-                    {[1, 2, 3, 4, 5].map((star) => (
-                      <Star key={star} className="w-5 h-5 fill-[var(--gold)] text-[var(--gold)]" />
-                    ))}
-                  </div>
-                  <p className="font-[family-name:var(--font-sans)] text-base text-[var(--warm-gray)] italic mb-4">
-                    "The designer helped us visualize exactly what we wanted. We ended up with a beautiful living room setup that exceeded our expectations."
-                  </p>
-                  <p className="font-[family-name:var(--font-sans)] text-sm font-medium text-[var(--charcoal)]">
-                    — Sarah A., Karachi
-                  </p>
-                </div>
-              </div>
-            </div>
+        <section className={styles.darkBand}>
+          <div className={styles.darkCards}>
+            <article className={styles.darkCard}>
+              <h2>what we cover</h2>
+              <p>Furniture scale, room planning, upholstery choices, curtain fabrics, cushion styling, and custom order direction.</p>
+            </article>
+            <article className={styles.darkCard}>
+              <h2>what to bring</h2>
+              <p>Room dimensions, photos, inspiration references, wall colors, and any fabric or finish preferences you already have.</p>
+            </article>
+          </div>
+          <div className={styles.choiceRow} style={{ justifyContent: "center", marginTop: 30 }}>
+            <a className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I want to book a free consultation.")}>WhatsApp</a>
           </div>
         </section>
       </main>
       <Footer />
-    </>
+    </div>
   );
 }

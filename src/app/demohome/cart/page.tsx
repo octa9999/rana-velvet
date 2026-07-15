@@ -1,5 +1,5 @@
-import { DemoShopMockups } from "@/components/demohome/DemoShopMockups";
+import { redirect } from "next/navigation";
 
 export default function Page() {
-  return <DemoShopMockups view="cart" />;
+  redirect("/cart");
 }

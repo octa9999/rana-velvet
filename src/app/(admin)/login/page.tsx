@@ -3,24 +3,41 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import Link from "next/link";
+import { createClient } from "@/lib/supabase/client";
 
 export default function AdminLoginPage() {
   const router = useRouter();
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
-    // For demo - in production would use Supabase auth
-    setTimeout(() => {
+    setError("");
+
+    const supabase = createClient();
+    if (!supabase) {
       router.push("/admin");
-    }, 1000);
+      return;
+    }
+
+    const auth = supabase.auth as unknown as {
+      signInWithPassword(credentials: { email: string; password: string }): Promise<{ error: { message: string } | null }>;
+    };
+    const { error: authError } = await auth.signInWithPassword({ email, password });
+    if (authError) {
+      setError(authError.message);
+      setLoading(false);
+      return;
+    }
+
+    router.push("/admin");
   };
 
   return (
-    <div className="min-h-screen bg-[var(--cream)] flex items-center justify-center p-6">
+    <div className="flex min-h-screen items-center justify-center bg-[#e9ebe9] p-4 sm:p-6">
       <div className="w-full max-w-md">
         {/* Logo */}
         <Link href="/" className="block text-center mb-8">
@@ -33,13 +50,14 @@ export default function AdminLoginPage() {
         </Link>
 
         {/* Login Form */}
-        <div className="bg-white border border-[var(--border)] p-8">
+        <div className="rounded-[32px] border border-black/5 bg-white p-6 shadow-2xl shadow-black/10 sm:p-8">
           <h1 className="font-[family-name:var(--font-playfair)] text-2xl font-light text-[var(--charcoal)] mb-2">
             Welcome Back
           </h1>
           <p className="font-[family-name:var(--font-sans)] text-sm text-[var(--warm-gray)] mb-8">
             Sign in to access your admin dashboard
           </p>
+          {error && <p className="mb-4 rounded-2xl bg-red-50 px-4 py-3 text-sm text-red-700">{error}</p>}
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -50,7 +68,7 @@ export default function AdminLoginPage() {
                 type="email"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-3 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm focus:outline-none focus:border-[var(--warm-taupe)]"
+                className="h-14 w-full rounded-[18px] border border-black/10 bg-[#f8f8f6] px-4 font-[family-name:var(--font-sans)] text-sm outline-none transition focus:border-[#0d6b3f] focus:bg-white"
                 placeholder="admin@ranavelvet.com"
                 required
               />
@@ -63,7 +81,7 @@ export default function AdminLoginPage() {
                 type="password"
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-3 border border-[var(--border)] font-[family-name:var(--font-sans)] text-sm focus:outline-none focus:border-[var(--warm-taupe)]"
+                className="h-14 w-full rounded-[18px] border border-black/10 bg-[#f8f8f6] px-4 font-[family-name:var(--font-sans)] text-sm outline-none transition focus:border-[#0d6b3f] focus:bg-white"
                 placeholder="Enter your password"
                 required
               />
@@ -72,7 +90,7 @@ export default function AdminLoginPage() {
               <label className="flex items-center gap-2">
                 <input
                   type="checkbox"
-                  className="w-4 h-4 rounded border-[var(--border)]"
+                  className="h-4 w-4 rounded-[5px] border-black/10"
                 />
                 <span className="font-[family-name:var(--font-sans)] text-sm text-[var(--warm-gray)]">
                   Remember me
@@ -85,7 +103,7 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-[var(--charcoal)] text-white font-[family-name:var(--font-sans)] font-medium py-3 hover:bg-[var(--deep-brown)] transition-colors disabled:opacity-50"
+              className="h-14 w-full rounded-full bg-[#0d6b3f] font-[family-name:var(--font-sans)] font-semibold text-white shadow-lg shadow-emerald-900/15 transition hover:-translate-y-0.5 hover:bg-[#095b35] disabled:opacity-50"
             >
               {loading ? "Signing in..." : "Sign In"}
             </button>
@@ -94,7 +112,7 @@ export default function AdminLoginPage() {
 
         <p className="text-center mt-6 font-[family-name:var(--font-sans)] text-sm text-[var(--warm-gray)]">
           <Link href="/" className="text-[var(--warm-taupe)] hover:underline">
-            ← Back to Website
+            Back to Website
           </Link>
         </p>
       </div>

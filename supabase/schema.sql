@@ -294,3 +294,95 @@ CREATE POLICY "Public insert on inquiries" ON inquiries
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('banners', 'banners', true);
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('avatars', 'avatars', true);
 -- INSERT INTO storage.buckets (id, name, public) VALUES ('testimonials', 'testimonials', true);
+
+-- Ecommerce operations tables
+CREATE TABLE IF NOT EXISTS orders (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_number VARCHAR(40) UNIQUE NOT NULL,
+    customer_name VARCHAR(255) NOT NULL,
+    customer_email VARCHAR(255),
+    customer_phone VARCHAR(50) NOT NULL,
+    shipping_address JSONB NOT NULL DEFAULT '{}',
+    subtotal DECIMAL(10,2) NOT NULL DEFAULT 0,
+    delivery_fee DECIMAL(10,2) NOT NULL DEFAULT 0,
+    discount_amount DECIMAL(10,2) NOT NULL DEFAULT 0,
+    total DECIMAL(10,2) NOT NULL DEFAULT 0,
+    payment_method VARCHAR(40) NOT NULL DEFAULT 'cod',
+    payment_status VARCHAR(30) NOT NULL DEFAULT 'pending',
+    fulfillment_status VARCHAR(30) NOT NULL DEFAULT 'new',
+    admin_notes TEXT,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS order_items (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+    product_id UUID REFERENCES products(id) ON DELETE SET NULL,
+    product_name VARCHAR(255) NOT NULL,
+    sku VARCHAR(100),
+    quantity INTEGER NOT NULL DEFAULT 1,
+    unit_price DECIMAL(10,2) NOT NULL DEFAULT 0,
+    selected_variant JSONB DEFAULT '{}',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS inventory_movements (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    product_id UUID REFERENCES products(id) ON DELETE CASCADE,
+    movement_type VARCHAR(30) NOT NULL CHECK (movement_type IN ('stock_in', 'stock_out', 'reserved', 'released', 'adjustment')),
+    quantity INTEGER NOT NULL,
+    reference_type VARCHAR(40),
+    reference_id UUID,
+    note TEXT,
+    created_by UUID REFERENCES admin_users(id) ON DELETE SET NULL,
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS payment_providers (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    name VARCHAR(120) NOT NULL,
+    provider_key VARCHAR(80) UNIQUE NOT NULL,
+    is_enabled BOOLEAN DEFAULT false,
+    config JSONB DEFAULT '{}',
+    sort_order INTEGER DEFAULT 0,
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS checkout_settings (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    key VARCHAR(120) UNIQUE NOT NULL,
+    value JSONB NOT NULL DEFAULT '{}',
+    updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE TABLE IF NOT EXISTS order_print_logs (
+    id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+    order_id UUID REFERENCES orders(id) ON DELETE CASCADE,
+    printed_by UUID REFERENCES admin_users(id) ON DELETE SET NULL,
+    document_type VARCHAR(40) NOT NULL DEFAULT 'packing_slip',
+    created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
+);
+
+CREATE INDEX IF NOT EXISTS idx_orders_order_number ON orders(order_number);
+CREATE INDEX IF NOT EXISTS idx_orders_payment_status ON orders(payment_status);
+CREATE INDEX IF NOT EXISTS idx_orders_fulfillment_status ON orders(fulfillment_status);
+CREATE INDEX IF NOT EXISTS idx_order_items_order_id ON order_items(order_id);
+CREATE INDEX IF NOT EXISTS idx_inventory_movements_product_id ON inventory_movements(product_id);
+
+ALTER TABLE orders ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_items ENABLE ROW LEVEL SECURITY;
+ALTER TABLE inventory_movements ENABLE ROW LEVEL SECURITY;
+ALTER TABLE payment_providers ENABLE ROW LEVEL SECURITY;
+ALTER TABLE checkout_settings ENABLE ROW LEVEL SECURITY;
+ALTER TABLE order_print_logs ENABLE ROW LEVEL SECURITY;
+
+CREATE POLICY "Admin full access on orders" ON orders FOR ALL USING (true);
+CREATE POLICY "Admin full access on order_items" ON order_items FOR ALL USING (true);
+CREATE POLICY "Admin full access on inventory_movements" ON inventory_movements FOR ALL USING (true);
+CREATE POLICY "Admin full access on payment_providers" ON payment_providers FOR ALL USING (true);
+CREATE POLICY "Admin full access on checkout_settings" ON checkout_settings FOR ALL USING (true);
+CREATE POLICY "Admin full access on order_print_logs" ON order_print_logs FOR ALL USING (true);
+
+CREATE POLICY "Public insert on orders" ON orders FOR INSERT WITH CHECK (true);
+CREATE POLICY "Public insert on order_items" ON order_items FOR INSERT WITH CHECK (true);

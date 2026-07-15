@@ -49,83 +49,76 @@
 }
 
 :root {
-  /* Rana Velvet - Luxury Furniture Brand Colors */
-  --background: #FAFAF8;
-  --foreground: #1A1A1A;
-  --card: #FFFFFF;
-  --card-foreground: #1A1A1A;
-  --popover: #FFFFFF;
-  --popover-foreground: #1A1A1A;
-  --primary: #8B7355;
-  --primary-foreground: #FFFFFF;
-  --secondary: #F5F4F0;
-  --secondary-foreground: #1A1A1A;
-  --muted: #F5F4F0;
-  --muted-foreground: #6B6B6B;
+  /* Warm editorial storefront base */
+  --background: #FBF8F4;
+  --foreground: #111111;
+  --card: #141414;
+  --card-foreground: #FFFFFF;
+  --popover: #141414;
+  --popover-foreground: #FFFFFF;
+  --primary: #FFFFFF;
+  --primary-foreground: #0A0A0A;
+  --secondary: #1A1A1A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1A1A1A;
+  --muted-foreground: #9A9A9A;
   --accent: #C4A77D;
-  --accent-foreground: #1A1A1A;
+  --accent-foreground: #0A0A0A;
   --destructive: #B91C1C;
-  --border: #E8E6E1;
-  --input: #E8E6E1;
-  --ring: #8B7355;
-  --chart-1: #8B7355;
+  --border: #2A2A2A;
+  --input: #2A2A2A;
+  --ring: #FFFFFF;
+  --chart-1: #FFFFFF;
   --chart-2: #C4A77D;
-  --chart-3: #6B6B6B;
-  --chart-4: #1A1A1A;
-  --chart-5: #F5F4F0;
-  --radius: 0.5rem;
-  --sidebar: #FAFAF8;
-  --sidebar-foreground: #1A1A1A;
-  --sidebar-primary: #8B7355;
-  --sidebar-primary-foreground: #FFFFFF;
-  --sidebar-accent: #F5F4F0;
-  --sidebar-accent-foreground: #1A1A1A;
-  --sidebar-border: #E8E6E1;
-  --sidebar-ring: #8B7355;
+  --chart-3: #9A9A9A;
+  --chart-4: #FFFFFF;
+  --chart-5: #1A1A1A;
+  --radius: 0.25rem;
+  --sidebar: #0A0A0A;
+  --sidebar-foreground: #FFFFFF;
+  --sidebar-primary: #C4A77D;
+  --sidebar-primary-foreground: #0A0A0A;
+  --sidebar-accent: #1A1A1A;
+  --sidebar-accent-foreground: #FFFFFF;
+  --sidebar-border: #2A2A2A;
+  --sidebar-ring: #C4A77D;
 
   /* Custom luxury palette */
-  --cream: #FAFAF8;
-  --charcoal: #1A1A1A;
+  --cream: #F5F5F5;
+  --charcoal: #0A0A0A;
   --warm-taupe: #8B7355;
   --gold: #C4A77D;
+  --gold-dim: rgba(196, 167, 125, 0.15);
   --soft-white: #FFFFFF;
-  --warm-gray: #6B6B6B;
-  --light-stone: #E8E6E1;
+  --warm-gray: #9A9A9A;
+  --light-stone: #1A1A1A;
   --deep-brown: #5C4D3C;
+  --pure-black: #000000;
+  --text-primary: #FFFFFF;
+  --text-secondary: #9A9A9A;
+  --text-light: #FFFFFF;
+  --divider: #2A2A2A;
 }
 
 .dark {
-  --background: #0F0F0F;
-  --foreground: #FAFAF8;
-  --card: #1A1A1A;
-  --card-foreground: #FAFAF8;
-  --popover: #1A1A1A;
-  --popover-foreground: #FAFAF8;
+  --background: #0A0A0A;
+  --foreground: #FFFFFF;
+  --card: #141414;
+  --card-foreground: #FFFFFF;
+  --popover: #141414;
+  --popover-foreground: #FFFFFF;
   --primary: #C4A77D;
-  --primary-foreground: #1A1A1A;
-  --secondary: #2A2A2A;
-  --secondary-foreground: #FAFAF8;
-  --muted: #2A2A2A;
-  --muted-foreground: #A0A0A0;
-  --accent: #8B7355;
-  --accent-foreground: #FAFAF8;
+  --primary-foreground: #0A0A0A;
+  --secondary: #1A1A1A;
+  --secondary-foreground: #FFFFFF;
+  --muted: #1A1A1A;
+  --muted-foreground: #9A9A9A;
+  --accent: #C4A77D;
+  --accent-foreground: #0A0A0A;
   --destructive: #DC2626;
   --border: #2A2A2A;
   --input: #2A2A2A;
   --ring: #C4A77D;
-  --chart-1: #C4A77D;
-  --chart-2: #8B7355;
-  --chart-3: #A0A0A0;
-  --chart-4: #FAFAF8;
-  --chart-5: #2A2A2A;
-  --sidebar: #0F0F0F;
-  --sidebar-foreground: #FAFAF8;
-  --sidebar-primary: #C4A77D;
-  --sidebar-primary-foreground: #1A1A1A;
-  --sidebar-accent: #2A2A2A;
-  --sidebar-accent-foreground: #FAFAF8;
-  --sidebar-border: #2A2A2A;
-  --sidebar-ring: #C4A77D;
 }
 
 @layer base {
@@ -134,24 +127,33 @@
   }
   body {
     @apply bg-background text-foreground;
+    font-family: var(--font-sans);
+    font-weight: 300;
+    letter-spacing: 0.01em;
   }
   html {
     @apply font-sans;
   }
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--font-playfair);
+    font-weight: 400;
+    letter-spacing: -0.02em;
+    line-height: 1.1;
+  }
+  input, button, select, textarea {
+    border-radius: 0.25rem;
+  }
 }
 
-/* Smooth scrolling */
+::selection {
+  background-color: var(--gold);
+  color: white;
+}
+
 html {
   scroll-behavior: smooth;
 }
 
-/* Custom selection */
-::selection {
-  background-color: var(--warm-taupe);
-  color: white;
-}
-
-/* Hide scrollbar but allow scrolling */
 .scrollbar-hide {
   -ms-overflow-style: none;
   scrollbar-width: none;
@@ -160,20 +162,56 @@ html {
   display: none;
 }
 
-/* Premium image loading */
 img {
   filter: opacity(1);
   transition: filter 0.3s ease;
 }
 
-/* Elegant link transitions */
 a {
-  transition: color 0.2s ease;
+  transition: color 0.2s ease, opacity 0.2s ease;
 }
 
-/* Luxury button hover states */
 button:focus-visible,
 a:focus-visible {
   outline: 2px solid var(--primary);
   outline-offset: 2px;
+}
+
+.label-uppercase {
+  font-size: 0.65rem;
+  font-weight: 500;
+  letter-spacing: 0.25em;
+  text-transform: uppercase;
+}
+
+/* Radial gold glow utility */
+.bg-radial-gold {
+  background: radial-gradient(ellipse at center, var(--gold) 0%, transparent 70%);
+}
+
+/* Section decorative frame */
+.section-frame {
+  position: relative;
+}
+.section-frame::before,
+.section-frame::after {
+  content: '';
+  position: absolute;
+  width: 3rem;
+  height: 3rem;
+  border-color: var(--gold);
+  border-style: solid;
+  opacity: 0.25;
+}
+.section-frame::before {
+  top: 1.5rem;
+  left: 1.5rem;
+  border-width: 1px 0 0 1px;
+  border-radius: 4px 0 0 0;
+}
+.section-frame::after {
+  bottom: 1.5rem;
+  right: 1.5rem;
+  border-width: 0 1px 1px 0;
+  border-radius: 0 0 4px 0;
 }
