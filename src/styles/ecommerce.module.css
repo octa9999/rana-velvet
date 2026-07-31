@@ -714,6 +714,27 @@
   line-height: 1.5;
 }
 
+.darkBand .field span {
+  color: rgba(255, 255, 255, 0.72);
+}
+
+.darkBand .field input,
+.darkBand .field select {
+  border-color: rgba(255, 255, 255, 0.28);
+  background: rgba(255, 255, 255, 0.08);
+  color: white;
+}
+
+.darkBand .field input::placeholder {
+  color: rgba(255, 255, 255, 0.68);
+  opacity: 1;
+}
+
+.darkBand .field select option {
+  background: var(--dark);
+  color: white;
+}
+
 .wide {
   grid-column: 1 / -1;
 }

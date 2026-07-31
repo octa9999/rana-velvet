@@ -62,3 +62,9 @@ test("display headings reserve room for descenders before adjacent content", () 
   assert.match(styles, /\.principlesHead h2\s*\{[\s\S]*?line-height:\s*1\.02;/);
   assert.match(styles, /\.darkCard h2\s*\{[\s\S]*?line-height:\s*1\.02;/);
 });
+
+test("collection toolbar keeps search and sort controls legible on dark backgrounds", () => {
+  const styles = read("src/styles/ecommerce.module.css");
+  assert.match(styles, /\.darkBand \.field input,\s*\.darkBand \.field select\s*\{[\s\S]*?background:\s*rgba\(255, 255, 255, 0\.08\);[\s\S]*?color:\s*white;/);
+  assert.match(styles, /\.darkBand \.field input::placeholder\s*\{[\s\S]*?color:\s*rgba\(255, 255, 255, 0\.68\);/);
+});
