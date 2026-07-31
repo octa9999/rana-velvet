@@ -157,7 +157,7 @@ Notes: ${form.notes || "-"}`;
                   <div key={item}><span>{item}</span><strong>350 GSM</strong></div>
                 ))}
               </div>
-              <p className={styles.muted}>Use real swatches and starting prices before launch. Selected fabric has a clear form value and appears in the submitted request.</p>
+              <p className={styles.muted}>Selected fabric, lining, accessories, and installation preferences are included with your curtain request.</p>
             </aside>
           </div>
         </section>

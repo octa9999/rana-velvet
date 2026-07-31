@@ -2,7 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, MapPin, Phone } from "lucide-react";
+import { ArrowRight, MapPin } from "lucide-react";
+import { showroomMapUrl } from "@/lib/storefront";
 
 function AnimatedItem({
   children,
@@ -80,18 +81,12 @@ export function BookAVisit() {
                   Visit the Rana Velvet studio to explore the complete furniture and fabric collection.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 lg:mb-8">
-                  <div className="flex items-center gap-3">
+                  <a className="flex items-center gap-3" href={showroomMapUrl} target="_blank" rel="noreferrer">
                     <MapPin className="w-5 h-5 text-[var(--gold)]" />
                     <span className="font-[family-name:var(--font-sans)] text-xs sm:text-sm text-white/70">
-                      Google Maps Location Available
+                      Get Directions On Google Maps
                     </span>
-                  </div>
-                  <div className="flex items-center gap-3">
-                    <Phone className="w-5 h-5 text-[var(--gold)]" />
-                    <span className="font-[family-name:var(--font-sans)] text-xs sm:text-sm text-white/70">
-                      Contact Number In Admin Settings
-                    </span>
-                  </div>
+                  </a>
                 </div>
                 <Link
                   href="/contact"

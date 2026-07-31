@@ -2,6 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { officialContactNote, showroomMapUrl } from "@/lib/storefront";
 import styles from "@/styles/ecommerce.module.css";
@@ -9,7 +10,6 @@ import styles from "@/styles/ecommerce.module.css";
 export function Footer() {
   const [settings, setSettings] = useState({
     business_name: "Rana Velvet",
-    showroom_address: "",
     business_phone: "",
   });
 
@@ -22,13 +22,16 @@ export function Footer() {
 
   return (
     <footer className={styles.footer}>
-      <div className={styles.footerTitle}>{settings.business_name}</div>
+      <div className={styles.footerIdentity}>
+        <Image src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={96} height={96} />
+        <div className={styles.footerTitle}>{settings.business_name}</div>
+      </div>
       <div className={styles.footerGrid}>
         <div>
-          <strong>Store details</strong>
-          <p className={styles.muted}>{settings.showroom_address || officialContactNote}</p>
+          <strong>Rana Velvet Studio</strong>
+          <p className={styles.muted}>{officialContactNote}</p>
           {settings.business_phone && <p className={styles.muted}>{settings.business_phone}</p>}
-          <a className={styles.muted} href={showroomMapUrl} target="_blank" rel="noreferrer">Open Location In Google Maps</a>
+          <a className={styles.muted} href={showroomMapUrl} target="_blank" rel="noreferrer">Get Directions On Google Maps</a>
         </div>
         <div className={styles.footerLinks}>
           <Link className={styles.secondaryPill} href="/products">Shop</Link>

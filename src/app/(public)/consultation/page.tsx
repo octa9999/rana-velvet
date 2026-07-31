@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Calendar, CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { referenceNumber, showroomMapUrl, whatsappHref } from "@/lib/storefront";
@@ -173,18 +173,6 @@ export default function ConsultationPage() {
                 <div>
                   <span><MapPin size={15} /> Location</span>
                   <a href={showroomMapUrl} target="_blank" rel="noreferrer">Open Location In Google Maps</a>
-                </div>
-                <div>
-                  <span><Phone size={15} /> Phone</span>
-                  <strong>Managed From Admin Settings</strong>
-                </div>
-                <div>
-                  <span><Calendar size={15} /> Days</span>
-                  <strong>Mon - Sat</strong>
-                </div>
-                <div>
-                  <span><Clock size={15} /> Hours</span>
-                  <strong>10 AM - 8 PM</strong>
                 </div>
               </div>
             </aside>

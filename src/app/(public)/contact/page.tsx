@@ -2,7 +2,7 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, CheckCircle2, MapPin } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { officialContactNote, showroomMapUrl, whatsappHref } from "@/lib/storefront";
@@ -13,16 +13,6 @@ const contactNotes = [
     icon: MapPin,
     title: "Store details",
     body: officialContactNote,
-  },
-  {
-    icon: Phone,
-    title: "Contact Number",
-    body: "Managed From Admin Settings",
-  },
-  {
-    icon: Mail,
-    title: "Studio email",
-    body: "Add verified email before launch",
   },
 ];
 
@@ -139,10 +129,10 @@ export default function ContactPage() {
             </form>
 
             <aside className={styles.summaryCard}>
-              <span className={styles.heroKicker}>Studio desk</span>
+              <span className={styles.heroKicker}>Studio Desk</span>
               <h2>Made Personal</h2>
               <p className={styles.muted} style={{ marginTop: 14, lineHeight: 1.55 }}>
-                For product questions, room styling, custom furniture, fabric selection, and showroom visits, send the details here or book a dedicated consultation.
+                For product questions, room styling, custom furniture, fabric selection, and studio visits, send the details here or book a dedicated consultation.
               </p>
               <div className={styles.summaryRows}>
                 {contactNotes.map((item) => {

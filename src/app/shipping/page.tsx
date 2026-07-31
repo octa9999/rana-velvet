@@ -6,9 +6,9 @@ import styles from "@/styles/ecommerce.module.css";
 
 const items = [
   "Orders are received as requests and confirmed by the Rana Velvet team before dispatch.",
-  "Ready-made product delivery time must be confirmed by the business before launch.",
+  "Ready-made delivery timelines are shared once the order, stock, and destination are confirmed.",
   "Furniture and custom order production time is confirmed after design, stock, and quotation review.",
-  "Cities served, delivery charges, and store pickup information must be verified before launch.",
+  "Delivery charges and pickup availability are confirmed with the customer before dispatch.",
   "Customers should inspect product condition, quantity, and selected options at delivery.",
 ];
 
@@ -20,7 +20,7 @@ export default function ShippingPage() {
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Information</span>
           <h1 className={styles.displayTitle}>Shipping</h1>
-          <p className={styles.heroCopy}>Delivery details below are launch-ready placeholders and should be checked by Rana Velvet before publishing final wording.</p>
+          <p className={styles.heroCopy}>Clear delivery guidance for furniture, curtains, and made-to-order pieces.</p>
         </section>
         <section className={styles.paperSection}>
           <div className={styles.infoGrid}>

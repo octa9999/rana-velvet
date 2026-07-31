@@ -1,7 +1,9 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import Image from "next/image";
 import { ArrowRight, Heart, Search, ShoppingBag } from "lucide-react";
+import { showroomMapUrl } from "@/lib/storefront";
 import styles from "./DemoHomePage.module.css";
 
 const asset = (file: string) => `/demohome-zenspace/${file}`;
@@ -118,7 +120,7 @@ export function DemoHomePage() {
       <section className={styles.hero}>
         <nav className={styles.topNav} aria-label="Demo navigation">
           <Link className={styles.brandMark} href="/">
-            <span aria-hidden="true">RV</span>
+            <Image className={styles.brandLogo} src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={38} height={38} priority />
             Rana Velvet
           </Link>
           <details className={styles.mobileMenu}>
@@ -333,10 +335,10 @@ export function DemoHomePage() {
             We are dedicated to offering discerning clientele a curated
             selection of furniture that embodies timeless elegance.
           </p>
-          <p>+21 1291 210109<br />+21 1291 9181</p>
-          <p>123 Elegance Avenue, Suite 101,<br />Metropolitan City</p>
+          <p>Talk To Us Through The Contact Form.</p>
+          <p><a href={showroomMapUrl} target="_blank" rel="noreferrer">Get Directions On Google Maps</a></p>
         </div>
-        <strong>Rana Velvet</strong>
+        <strong><Image src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={96} height={96} />Rana Velvet</strong>
         <div className={styles.footerLinks}>
           <nav aria-label="Footer categories">
             {categories.map(([label]) => (

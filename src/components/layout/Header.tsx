@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 import { ArrowRight, Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
@@ -132,7 +133,7 @@ export function Header() {
   return (
     <header className={styles.nav}>
       <Link className={styles.brandMark} href="/">
-        <span aria-hidden="true">RV</span>
+        <Image className={styles.brandLogo} src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={38} height={38} priority />
         Rana Velvet
       </Link>
 
