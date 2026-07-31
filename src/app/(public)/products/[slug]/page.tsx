@@ -226,7 +226,7 @@ export default function ProductDetailPage() {
         <section className={styles.darkBand}>
           <div className={styles.darkCards}>
             <article className={styles.darkCard}>
-              <h2>details</h2>
+              <h2>Details</h2>
               <ul>
                 {product.details.map((detail) => (
                   <li key={detail}>{detail}</li>
@@ -234,7 +234,7 @@ export default function ProductDetailPage() {
               </ul>
             </article>
             <article className={styles.darkCard}>
-              <h2>dimensions</h2>
+              <h2>Dimensions</h2>
               <p>Width: {product.dimensions.width}</p>
               <p>Depth: {product.dimensions.depth}</p>
               <p>Height: {product.dimensions.height}</p>
@@ -247,7 +247,7 @@ export default function ProductDetailPage() {
         <section className={styles.paperSection}>
           <div className={styles.sectionHead} style={{ color: "var(--ink)" }}>
             <p className={styles.muted}>Explore related products from the same room or category.</p>
-            <h2>related</h2>
+            <h2>Related</h2>
             <Link className={styles.secondaryPill} href="/products">
               Back to Shop <ArrowRight size={15} />
             </Link>

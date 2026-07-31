@@ -58,7 +58,7 @@ export default function CategoriesPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Our Collections</span>
-          <h1 className={styles.displayTitle}>room edits</h1>
+          <h1 className={styles.displayTitle}>Room Edits</h1>
           <p className={styles.heroCopy}>
             Browse furniture, curtains, fabrics, decor, and custom pieces as complete room directions.
           </p>
@@ -67,7 +67,7 @@ export default function CategoriesPage() {
         <section className={styles.darkBand}>
           <div className={styles.sectionHead}>
             <p>Each collection is presented as a complete room cue, with materials, finish, and function considered together.</p>
-            <h2>collections</h2>
+            <h2>Collections</h2>
             <Link className={styles.secondaryPill} href="/products">
               Shop All <ArrowRight size={15} />
             </Link>

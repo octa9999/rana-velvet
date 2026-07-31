@@ -41,7 +41,7 @@ Projects: ${form.projects}`;
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Interior Designer Partners</span>
-          <h1 className={styles.displayTitle}>project support</h1>
+          <h1 className={styles.displayTitle}>Project Support</h1>
           <p className={styles.heroCopy}>Professionals can request Rana Velvet support for client projects, fabric access, and custom coordination.</p>
         </section>
         <section className={styles.paperSection}>
@@ -55,7 +55,7 @@ Projects: ${form.projects}`;
                 </div>
               ) : (
                 <>
-                  <h2>application form</h2>
+                  <h2>Application Form</h2>
                   <div className={styles.formGrid} style={{ marginTop: 24 }}>
                     <label className={styles.field}><span>Full name</span><input value={form.name} onChange={(e) => update("name", e.target.value)} /></label>
                     <label className={styles.field}><span>Phone/WhatsApp</span><input value={form.phone} onChange={(e) => update("phone", e.target.value)} /></label>
@@ -71,7 +71,7 @@ Projects: ${form.projects}`;
               )}
             </form>
             <aside className={styles.summaryCard}>
-              <h2>who can apply</h2>
+              <h2>Who Can Apply</h2>
               <div className={styles.summaryRows}>
                 {["Interior designers", "Architects", "Stylists", "Contractors"].map((item) => <div key={item}><span>{item}</span><strong>Eligible</strong></div>)}
               </div>

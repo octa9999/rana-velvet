@@ -4,8 +4,8 @@ import { createAdminSupabase } from "@/lib/supabase/server";
 export async function GET() {
   const fallback = {
     business_name: "Rana Velvet",
-    showroom_address: "D Ground, Faisalabad",
-    business_phone: "+92 300 1234567",
+    showroom_address: "Directions available on Google Maps",
+    business_phone: "",
   };
 
   const supabase = createAdminSupabase();

@@ -66,7 +66,7 @@ function OrderConfirmationContent() {
       <main>
         <section className={styles.hero}>
           <span className={styles.heroKicker}>Order confirmed</span>
-          <h1 className={styles.displayTitle}>thank you</h1>
+          <h1 className={styles.displayTitle}>Thank You</h1>
           <p className={styles.heroCopy}>
             {order ? `Thank you${order.customer_name ? `, ${order.customer_name}` : ""}. Your order request has been received.` : loaded ? "No recent order found." : "Loading your order request."}
           </p>
@@ -92,7 +92,7 @@ function OrderConfirmationContent() {
           <div className={styles.confirmGrid}>
             <article className={styles.confirmCard}>
               <Package size={24} />
-              <h3 style={{ marginTop: 20 }}>order details</h3>
+              <h3 style={{ marginTop: 20 }}>Order Details</h3>
               <div className={styles.summaryRows}>
                 <div><span>Payment</span><strong>{order?.payment_method === "bank_transfer" ? "Bank Transfer" : "Cash on Delivery"}</strong></div>
                 <div><span>Status</span><strong>Pending Confirmation</strong></div>
@@ -115,7 +115,7 @@ function OrderConfirmationContent() {
 
             <article className={styles.confirmCard}>
               <MapPin size={24} />
-              <h3 style={{ marginTop: 20 }}>delivery</h3>
+              <h3 style={{ marginTop: 20 }}>Delivery</h3>
               <p className={styles.muted}>{order ? `${order.shipping_address}, ${order.city}` : "Address saved with your order"}</p>
               <p className={styles.muted} style={{ display: "flex", gap: 8, alignItems: "center", marginTop: 18 }}>
                 <Phone size={16} /> {order?.customer_phone || "Phone saved with your order"}
@@ -123,7 +123,7 @@ function OrderConfirmationContent() {
             </article>
 
             <article className={styles.confirmCard}>
-              <h3>next step</h3>
+              <h3>Next Step</h3>
               <p className={styles.muted}>
                 Rana Velvet will confirm stock, delivery, production time, and payment before the order is treated as fully confirmed.
               </p>

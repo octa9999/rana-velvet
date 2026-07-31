@@ -15,7 +15,7 @@ export default function TermsPage() {
     <div className={styles.shell}>
       <Header />
       <main>
-        <section className={`${styles.hero} ${styles.heroCompact}`}><span className={styles.heroKicker}>Information</span><h1 className={styles.displayTitle}>terms</h1><p className={styles.heroCopy}>Final legal wording should be reviewed by the business before launch.</p></section>
+        <section className={`${styles.hero} ${styles.heroCompact}`}><span className={styles.heroKicker}>Information</span><h1 className={styles.displayTitle}>Terms</h1><p className={styles.heroCopy}>Final legal wording should be reviewed by the business before launch.</p></section>
         <section className={styles.paperSection}><div className={styles.infoGrid}>{items.map((item) => <article className={styles.infoCard} key={item}><p>{item}</p></article>)}</div></section>
       </main>
       <Footer />

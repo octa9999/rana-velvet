@@ -164,7 +164,7 @@ export const adminCategories: AdminCategory[] = [
 ];
 
 export const adminOrders: AdminOrder[] = [
-  { id: "RV-2401", customer: "Ahmed Khan", city: "Faisalabad", amount: 129999, payment: "COD", status: "new", items: 2, date: "Today" },
+  { id: "RV-2401", customer: "Ahmed Khan", city: "Pakistan", amount: 129999, payment: "COD", status: "new", items: 2, date: "Today" },
   { id: "RV-2400", customer: "Sara Malik", city: "Lahore", amount: 89999, payment: "Card", status: "processing", items: 1, date: "Yesterday" },
   { id: "RV-2399", customer: "Bilal Raza", city: "Islamabad", amount: 219998, payment: "Bank", status: "ready", items: 3, date: "Jun 08" },
   { id: "RV-2398", customer: "Ayesha Noor", city: "Karachi", amount: 34999, payment: "COD", status: "delivered", items: 1, date: "Jun 07" },

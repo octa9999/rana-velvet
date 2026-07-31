@@ -62,6 +62,18 @@
   font-weight: 900;
 }
 
+.brandMark span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
 .navGroups,
 .navTools {
   display: flex;
@@ -245,6 +257,13 @@
   font-weight: 500;
   letter-spacing: -0.075em;
   text-align: right;
+}
+
+.principlesHead h2 {
+  font-size: clamp(3.6rem, 6vw, 6.8rem);
+  line-height: 1;
+  letter-spacing: 0;
+  overflow-wrap: anywhere;
 }
 
 .filters {

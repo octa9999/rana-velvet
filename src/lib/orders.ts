@@ -23,11 +23,15 @@ export const checkoutOrderSchema = z.object({
     province: z.string().min(1),
     postalCode: z.string().optional(),
   }),
-  paymentMethod: z.enum(["cod", "bank_transfer"]),
+  paymentMethod: z.enum(["cod", "bank_transfer", "advance_cash"]),
   items: z.array(orderItemSchema).min(1),
   deliveryFee: z.number().nonnegative(),
   subtotal: z.number().nonnegative(),
   total: z.number().positive(),
+}).superRefine((order, context) => {
+  if (order.paymentMethod === "advance_cash" && order.subtotal <= 20000) {
+    context.addIssue({ code: "custom", path: ["paymentMethod"], message: "Advance Cash is available for orders above Rs. 20,000." });
+  }
 });
 
 export type CheckoutOrderInput = z.infer<typeof checkoutOrderSchema>;
@@ -45,7 +49,7 @@ export type StoreOrder = {
   subtotal: number;
   delivery_fee: number;
   total: number;
-  payment_method: "cod" | "bank_transfer";
+  payment_method: "cod" | "bank_transfer" | "advance_cash";
   payment_status: string;
   fulfillment_status: string;
   created_at: string;
@@ -110,7 +114,7 @@ function fallbackOrder(input: CheckoutOrderInput): StoreOrder {
     delivery_fee: input.deliveryFee,
     total: input.total,
     payment_method: input.paymentMethod,
-    payment_status: input.paymentMethod === "cod" ? "pending_collection" : "awaiting_transfer",
+    payment_status: input.paymentMethod === "cod" ? "pending_collection" : input.paymentMethod === "advance_cash" ? "awaiting_advance_70" : "awaiting_transfer",
     fulfillment_status: "new",
     created_at: new Date().toISOString(),
     items: input.items.map((item) => ({
@@ -143,7 +147,7 @@ function orderFromRows(order: DbOrderRow, items: DbOrderItemRow[] = []): StoreOr
     subtotal: Number(order.subtotal ?? 0),
     delivery_fee: Number(order.delivery_fee ?? 0),
     total: Number(order.total ?? 0),
-    payment_method: (order.payment_method === "bank_transfer" ? "bank_transfer" : "cod"),
+    payment_method: order.payment_method === "advance_cash" ? "advance_cash" : order.payment_method === "bank_transfer" ? "bank_transfer" : "cod",
     payment_status: typeof order.payment_status === "string" ? order.payment_status : "pending",
     fulfillment_status: typeof order.fulfillment_status === "string" ? order.fulfillment_status : "new",
     created_at: typeof order.created_at === "string" ? order.created_at : new Date().toISOString(),
@@ -205,7 +209,7 @@ export async function createOrder(input: CheckoutOrderInput) {
       delivery_fee: parsed.deliveryFee,
       total: parsed.total,
       payment_method: parsed.paymentMethod,
-      payment_status: parsed.paymentMethod === "cod" ? "pending_collection" : "awaiting_transfer",
+      payment_status: parsed.paymentMethod === "cod" ? "pending_collection" : parsed.paymentMethod === "advance_cash" ? "awaiting_advance_70" : "awaiting_transfer",
       fulfillment_status: "new",
     })
     .select()

@@ -61,7 +61,7 @@ Requirements: ${form.requirements || "-"}`;
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Custom Furniture</span>
-          <h1 className={styles.displayTitle}>made for your space</h1>
+          <h1 className={styles.displayTitle}>Made For Your Space</h1>
           <p className={styles.heroCopy}>Share an idea, size, fabric, finish, and budget. Rana Velvet will review it and prepare the next step.</p>
         </section>
         <section className={styles.darkBand}>
@@ -89,7 +89,7 @@ Requirements: ${form.requirements || "-"}`;
                 </div>
               ) : (
                 <>
-                  <h2>request form</h2>
+                  <h2>Request Form</h2>
                   <div className={styles.formGrid} style={{ marginTop: 24 }}>
                     <label className={styles.field}><span>Full name</span><input value={form.name} onChange={(e) => update("name", e.target.value)} /></label>
                     <label className={styles.field}><span>Phone/WhatsApp</span><input value={form.phone} onChange={(e) => update("phone", e.target.value)} /></label>
@@ -109,10 +109,10 @@ Requirements: ${form.requirements || "-"}`;
               )}
             </form>
             <aside className={styles.summaryCard}>
-              <h2>need help?</h2>
+              <h2>Need Help?</h2>
               <p className={styles.muted}>Ask for help with a custom piece, or book a free consultation for room planning and fabric direction.</p>
               <div className={styles.choiceRow} style={{ marginTop: 22 }}>
-                <Link className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I need help with a custom furniture piece.")}>WhatsApp Help</Link>
+                <Link className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I need help with a custom furniture piece.")}>Talk To Us</Link>
                 <Link className={styles.secondaryPill} href="/consultation">Book Consultation <ArrowRight size={15} /></Link>
               </div>
             </aside>

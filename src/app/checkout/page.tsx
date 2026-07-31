@@ -18,7 +18,7 @@ export default function CheckoutPage() {
   const router = useRouter();
   const { items, clearCart } = useCart();
   const [step, setStep] = useState(1);
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "bank_transfer">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "bank_transfer" | "advance_cash">("cod");
   const [deliveryPreference, setDeliveryPreference] = useState<"standard" | "pickup" | "confirm">("confirm");
   const [acceptedConfirmation, setAcceptedConfirmation] = useState(false);
   const [placing, setPlacing] = useState(false);
@@ -29,7 +29,7 @@ export default function CheckoutPage() {
     email: "",
     phone: "",
     address: "",
-    city: "Faisalabad",
+    city: "",
     province: "punjab",
     postalCode: "",
     notes: "",
@@ -38,6 +38,9 @@ export default function CheckoutPage() {
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const deliveryFee = subtotal > 50000 || subtotal === 0 ? 0 : 2500;
   const total = subtotal + deliveryFee;
+  const qualifiesForAdvanceCash = subtotal > 20000;
+  const advanceAmount = Math.round(total * 0.7);
+  const codBalance = total - advanceAmount;
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement | HTMLSelectElement>) => {
     setFormData((current) => ({ ...current, [event.target.name]: event.target.value }));
@@ -96,7 +99,7 @@ export default function CheckoutPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Secure checkout</span>
-          <h1 className={styles.displayTitle}>checkout</h1>
+          <h1 className={styles.displayTitle}>Checkout</h1>
           <p className={styles.heroCopy}>
             Confirm your delivery details and choose the payment method that suits your order.
           </p>
@@ -116,7 +119,7 @@ export default function CheckoutPage() {
 
               {step === 1 ? (
                 <>
-                  <h2>contact and delivery</h2>
+                  <h2>Contact And Delivery</h2>
                   <div className={styles.formGrid} style={{ marginTop: 26 }}>
                     {[
                       ["firstName", "Full Name", "Your full name"],
@@ -172,11 +175,12 @@ export default function CheckoutPage() {
                   <button className={styles.secondaryPill} onClick={() => setStep(1)} type="button">
                     <ArrowLeft size={15} /> Edit shipping
                   </button>
-                  <h2 style={{ marginTop: 24 }}>payment method</h2>
+                  <h2 style={{ marginTop: 24 }}>Payment Method</h2>
                   <div className={styles.methodGrid} style={{ marginTop: 24 }}>
                     {[
                       { key: "cod", label: "Cash on delivery or confirmation", icon: Banknote, body: "The team confirms stock, timing, and payment before dispatch." },
                       { key: "bank_transfer", label: "Bank transfer or deposit after quotation", icon: CreditCard, body: "Use for bank transfer, quotation deposits, and custom order confirmation." },
+                      ...(qualifiesForAdvanceCash ? [{ key: "advance_cash", label: "Advance Cash (70%)", icon: Banknote, body: `Pay ${formatPrice(advanceAmount)} before production or dispatch, then ${formatPrice(codBalance)} by cash on delivery.` }] : []),
                     ].map((method) => {
                       const Icon = method.icon;
                       const active = paymentMethod === method.key;
@@ -184,7 +188,7 @@ export default function CheckoutPage() {
                         <button
                           className={`${styles.method} ${active ? styles.methodActive : ""}`}
                           key={method.key}
-                          onClick={() => setPaymentMethod(method.key as "cod" | "bank_transfer")}
+                          onClick={() => setPaymentMethod(method.key as "cod" | "bank_transfer" | "advance_cash")}
                           type="button"
                         >
                           <Icon size={24} />
@@ -194,6 +198,12 @@ export default function CheckoutPage() {
                       );
                     })}
                   </div>
+                  {paymentMethod === "advance_cash" && (
+                    <div className={styles.card} style={{ marginTop: 18 }}>
+                      <strong>Advance Cash Payment Plan</strong>
+                      <p className={styles.muted} style={{ marginTop: 8 }}>Pay 70% ({formatPrice(advanceAmount)}) in advance. The remaining 30% ({formatPrice(codBalance)}) is payable by cash on delivery.</p>
+                    </div>
+                  )}
                   <label className={styles.checkField} style={{ marginTop: 18 }}>
                     <input
                       checked={acceptedConfirmation}
@@ -213,11 +223,12 @@ export default function CheckoutPage() {
             </div>
 
             <aside className={styles.summaryCard}>
-              <h2>order summary</h2>
+              <h2>Order Summary</h2>
               <div className={styles.summaryRows}>
                 <div><span>Subtotal</span><strong>{formatPrice(subtotal)}</strong></div>
                 <div><span>Delivery</span><strong>{deliveryFee === 0 ? "Free" : formatPrice(deliveryFee)}</strong></div>
                 <div className={styles.totalRow}><span>Total</span><strong>{formatPrice(total)}</strong></div>
+                {qualifiesForAdvanceCash && <div><span>Advance Cash Option</span><strong>70% / 30% COD</strong></div>}
               </div>
               <div style={{ display: "grid", gap: 12 }}>
                 {items.length === 0 ? (

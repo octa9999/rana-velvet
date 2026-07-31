@@ -30,7 +30,7 @@ const collections = [
     image: "https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=800&q=80",
   },
   {
-    title: "Curtains & Fabrics",
+    title: "Ready-Made Curtains",
     subtitle: "Velvet Collection",
     description: "Signature velvets and premium textiles",
     href: "/categories/curtains",

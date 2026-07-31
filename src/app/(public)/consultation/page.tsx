@@ -4,7 +4,7 @@ import { useState } from "react";
 import { ArrowRight, Calendar, CheckCircle2, Clock, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { referenceNumber, whatsappHref } from "@/lib/storefront";
+import { referenceNumber, showroomMapUrl, whatsappHref } from "@/lib/storefront";
 import styles from "@/styles/ecommerce.module.css";
 
 const services = [
@@ -53,8 +53,8 @@ export default function ConsultationPage() {
       <Header />
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
-          <span className={styles.heroKicker}>Faisalabad showroom</span>
-          <h1 className={styles.displayTitle}>book a consultation</h1>
+          <span className={styles.heroKicker}>Rana Velvet Studio</span>
+          <h1 className={styles.displayTitle}>Book A Consultation</h1>
           <p className={styles.heroCopy}>
             Reserve a focused design session for furniture selection, fabric matching, room planning, and custom interior guidance.
           </p>
@@ -63,7 +63,7 @@ export default function ConsultationPage() {
         <section className={styles.paperSection}>
           <div className={styles.contentGrid}>
             <form className={styles.formCard} onSubmit={submit}>
-              <h2>appointment details</h2>
+              <h2>Appointment Details</h2>
               <p className={styles.muted} style={{ margin: "18px 0 28px", lineHeight: 1.45 }}>
                 Share your preferred time and project context. The booking will appear in the admin appointments queue immediately.
               </p>
@@ -165,18 +165,18 @@ export default function ConsultationPage() {
 
             <aside className={styles.summaryCard}>
               <span className={styles.heroKicker}>Tradition & Sophistication</span>
-              <h2>visit the showroom</h2>
+              <h2>Visit The Studio</h2>
               <p className={styles.muted} style={{ margin: "20px 0 28px", lineHeight: 1.45 }}>
-                Rana Velvet offers original design guidance, handcrafted furniture, fabric consultation, and refined furnishing support from our Faisalabad showroom.
+                Rana Velvet offers original design guidance, handcrafted furniture, fabric consultation, and refined furnishing support for your home.
               </p>
               <div className={styles.summaryRows}>
                 <div>
                   <span><MapPin size={15} /> Location</span>
-                  <strong>Verify store location before launch</strong>
+                  <a href={showroomMapUrl} target="_blank" rel="noreferrer">Open Location In Google Maps</a>
                 </div>
                 <div>
                   <span><Phone size={15} /> Phone</span>
-                  <strong>Verify phone before launch</strong>
+                  <strong>Managed From Admin Settings</strong>
                 </div>
                 <div>
                   <span><Calendar size={15} /> Days</span>
@@ -194,16 +194,16 @@ export default function ConsultationPage() {
         <section className={styles.darkBand}>
           <div className={styles.darkCards}>
             <article className={styles.darkCard}>
-              <h2>what we cover</h2>
+              <h2>What We Cover</h2>
               <p>Furniture scale, room planning, upholstery choices, curtain fabrics, cushion styling, and custom order direction.</p>
             </article>
             <article className={styles.darkCard}>
-              <h2>what to bring</h2>
+              <h2>What To Bring</h2>
               <p>Room dimensions, photos, inspiration references, wall colors, and any fabric or finish preferences you already have.</p>
             </article>
           </div>
           <div className={styles.choiceRow} style={{ justifyContent: "center", marginTop: 30 }}>
-            <a className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I want to book a free consultation.")}>WhatsApp</a>
+            <a className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I want to book a free consultation.")}>Talk To Us</a>
           </div>
         </section>
       </main>

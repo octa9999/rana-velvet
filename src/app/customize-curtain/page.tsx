@@ -12,6 +12,7 @@ const roomTypes = ["Living room", "Bedroom", "Drawing room", "Dining room", "Off
 const fabrics = ["Premium Velvet", "Sheer", "Blackout", "Help me choose"];
 const stylesList = ["Eyelet", "Wave", "Pinch pleat", "Help me choose"];
 const linings = ["No lining", "Standard lining", "Blackout lining", "Help me choose"];
+const accessories = ["No accessories", "Curtain rods", "Holdbacks", "Tiebacks", "Need guidance"];
 
 export default function CustomizeCurtainPage() {
   const [path, setPath] = useState<"measurements" | "visit">("measurements");
@@ -28,6 +29,7 @@ export default function CustomizeCurtainPage() {
     fabric: "",
     curtainStyle: "Eyelet",
     lining: "No lining",
+    accessories: "No accessories",
     installation: "No",
     city: "",
     area: "",
@@ -58,8 +60,8 @@ export default function CustomizeCurtainPage() {
     const ref = referenceNumber(path === "visit" ? "RV-CV" : "RV-CR");
     const message = `${path === "visit" ? "Curtain measurement visit" : "Custom curtain request"} ${ref}
 Room: ${form.roomType}
-Measurements: ${form.width || "-"} x ${form.height || "-"} ${form.unit}; pieces/windows: ${form.pieces}
-Fabric: ${form.fabric}; style: ${form.curtainStyle}; lining: ${form.lining}; installation: ${form.installation}
+Measurements: ${form.width || "-"} x ${form.height || "-"} ${form.unit}; pieces: ${form.pieces}
+Fabric: ${form.fabric}; style: ${form.curtainStyle}; lining: ${form.lining}; accessories: ${form.accessories}; installation: ${form.installation}
 Visit: ${form.date || "-"} ${form.time || "-"}
 Address: ${form.address || "-"}, ${form.area || "-"}, ${form.city || "-"}
 Notes: ${form.notes || "-"}`;
@@ -82,15 +84,15 @@ Notes: ${form.notes || "-"}`;
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Customize Your Curtain</span>
-          <h1 className={styles.displayTitle}>made to measure</h1>
+          <h1 className={styles.displayTitle}>Made To Measure</h1>
           <p className={styles.heroCopy}>Enter your own measurements or book a visit so Rana Velvet can measure the space.</p>
         </section>
         <section className={styles.paperSection}>
           <div className={styles.contentGrid}>
             <form className={styles.formCard} onSubmit={submit}>
               <div className={styles.choiceRow} style={{ marginBottom: 24 }}>
-                <button className={`${styles.secondaryPill} ${path === "measurements" ? styles.primaryPill : ""}`} onClick={() => setPath("measurements")} type="button">I have measurements</button>
-                <button className={`${styles.secondaryPill} ${path === "visit" ? styles.primaryPill : ""}`} onClick={() => setPath("visit")} type="button">Book a measurement visit</button>
+                <button className={`${styles.secondaryPill} ${path === "measurements" ? styles.primaryPill : ""}`} onClick={() => setPath("measurements")} type="button">I Have Measurements</button>
+                <button className={`${styles.secondaryPill} ${path === "visit" ? styles.primaryPill : ""}`} onClick={() => setPath("visit")} type="button">Book A Measurement Visit</button>
               </div>
               {reference ? (
                 <div className={styles.successPanel}>
@@ -106,7 +108,7 @@ Notes: ${form.notes || "-"}`;
                 </div>
               ) : (
                 <>
-                  <h2>{path === "visit" ? "visit booking" : "curtain request"}</h2>
+                  <h2>{path === "visit" ? "Visit Booking" : "Curtain Request"}</h2>
                   <p className={styles.muted} style={{ margin: "14px 0 24px" }}>Measure the full area to be covered, not only the glass.</p>
                   <div className={styles.formGrid}>
                     <label className={styles.field}><span>Room type</span><select value={form.roomType} onChange={(e) => update("roomType", e.target.value)}>{roomTypes.map((item) => <option key={item}>{item}</option>)}</select></label>
@@ -115,7 +117,7 @@ Notes: ${form.notes || "-"}`;
                         <label className={styles.field}><span>Coverage width</span><input value={form.width} onChange={(e) => update("width", e.target.value)} /></label>
                         <label className={styles.field}><span>Finished height</span><input value={form.height} onChange={(e) => update("height", e.target.value)} /></label>
                         <label className={styles.field}><span>Unit</span><select value={form.unit} onChange={(e) => update("unit", e.target.value)}><option>inches</option><option>feet</option><option>centimetres</option></select></label>
-                        <label className={styles.field}><span>Pieces/windows</span><input value={form.pieces} onChange={(e) => update("pieces", e.target.value)} /></label>
+                        <label className={styles.field}><span>Pieces</span><input value={form.pieces} onChange={(e) => update("pieces", e.target.value)} /></label>
                       </>
                     )}
                     {path === "visit" && (
@@ -130,6 +132,7 @@ Notes: ${form.notes || "-"}`;
                     <label className={styles.field}><span>Fabric</span><select value={form.fabric} onChange={(e) => update("fabric", e.target.value)}><option value="">Select fabric</option>{fabrics.map((item) => <option key={item}>{item}</option>)}</select></label>
                     <label className={styles.field}><span>Curtain style</span><select value={form.curtainStyle} onChange={(e) => update("curtainStyle", e.target.value)}>{stylesList.map((item) => <option key={item}>{item}</option>)}</select></label>
                     <label className={styles.field}><span>Lining</span><select value={form.lining} onChange={(e) => update("lining", e.target.value)}>{linings.map((item) => <option key={item}>{item}</option>)}</select></label>
+                    <label className={styles.field}><span>Accessories Required</span><select value={form.accessories} onChange={(e) => update("accessories", e.target.value)}>{accessories.map((item) => <option key={item}>{item}</option>)}</select></label>
                     <label className={styles.field}><span>Installation required</span><select value={form.installation} onChange={(e) => update("installation", e.target.value)}><option>No</option><option>Yes</option></select></label>
                     <label className={styles.field}><span>Full name</span><input value={form.name} onChange={(e) => update("name", e.target.value)} /></label>
                     <label className={styles.field}><span>Phone/WhatsApp</span><input value={form.phone} onChange={(e) => update("phone", e.target.value)} /></label>
@@ -148,7 +151,7 @@ Notes: ${form.notes || "-"}`;
               )}
             </form>
             <aside className={styles.summaryCard}>
-              <h2>fabric cards</h2>
+              <h2>Fabric Cards</h2>
               <div className={styles.summaryRows}>
                 {["Ivory Premium Velvet", "Mocha Premium Velvet", "Forest Green Premium Velvet", "Burgundy Premium Velvet"].map((item) => (
                   <div key={item}><span>{item}</span><strong>350 GSM</strong></div>

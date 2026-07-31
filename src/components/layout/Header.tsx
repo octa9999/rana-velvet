@@ -8,16 +8,21 @@ import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import styles from "@/styles/ecommerce.module.css";
 
-const fallbackNavItems = [
+type NavItem = {
+  label: string;
+  href: string;
+  note: string;
+  isDirect?: boolean;
+  subcategories: Array<{ name: string; href: string }>;
+};
+
+const fallbackNavItems: NavItem[] = [
   {
     label: "Home",
     href: "/",
     note: "Landing page",
-    subcategories: [
-      { name: "Shop the Collection", href: "/products" },
-      { name: "Customize Curtain", href: "/customize-curtain" },
-      { name: "Book Consultation", href: "/consultation" },
-    ],
+    isDirect: true,
+    subcategories: [],
   },
   {
     label: "Shop",
@@ -27,7 +32,7 @@ const fallbackNavItems = [
       { name: "Bedroom", href: "/products?category=Bedroom" },
       { name: "Living Room", href: "/products?category=Living%20Room" },
       { name: "Sofas & Seating", href: "/products?category=Seating" },
-      { name: "Curtains & Fabrics", href: "/products?category=Curtains" },
+      { name: "Ready-Made Curtains", href: "/products?category=Curtains" },
     ],
   },
   {
@@ -37,7 +42,7 @@ const fallbackNavItems = [
     subcategories: [
       { name: "I Have Measurements", href: "/customize-curtain?path=measurements" },
       { name: "Book Measurement Visit", href: "/customize-curtain?path=visit" },
-      { name: "Ready-Made Curtains", href: "/products?category=Curtains" },
+      { name: "Fabric & Lining Options", href: "/customize-curtain?path=measurements" },
     ],
   },
   {
@@ -100,6 +105,11 @@ export function Header() {
   const wishlistCount = wishlistItems.length;
 
   useEffect(() => {
+    if (pathname !== "/products") {
+      setNavItems(fallbackNavItems);
+      return;
+    }
+
     fetch("/api/catalog/categories")
       .then((response) => response.json())
       .then((payload) => {
@@ -117,11 +127,12 @@ export function Header() {
         }
       })
       .catch(() => setNavItems(fallbackNavItems));
-  }, []);
+  }, [pathname]);
 
   return (
     <header className={styles.nav}>
       <Link className={styles.brandMark} href="/">
+        <span aria-hidden="true">RV</span>
         Rana Velvet
       </Link>
 
@@ -161,9 +172,9 @@ export function Header() {
           <div className={styles.navGroup} key={item.label}>
             <Link className={`${styles.navTrigger} ${pathname === item.href ? styles.navActive : ""}`} href={item.href}>
               {item.label}
-              <ArrowRight size={13} />
+              {!item.isDirect && <ArrowRight size={13} />}
             </Link>
-            <div className={styles.megaPanel}>
+            {!item.isDirect && <div className={styles.megaPanel}>
               <div>
                 <span>{item.note}</span>
                 <strong>{item.label}</strong>
@@ -176,7 +187,7 @@ export function Header() {
                   </Link>
                 ))}
               </div>
-            </div>
+            </div>}
           </div>
         ))}
       </nav>

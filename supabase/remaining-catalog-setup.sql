@@ -260,15 +260,15 @@ on conflict (provider_key) do update set name = excluded.name, is_enabled = excl
 
 insert into public.checkout_settings (key, value)
 values
-  ('delivery', '{"fee":2500,"free_delivery_threshold":50000,"city":"Faisalabad"}'),
+  ('delivery', '{"fee":2500,"free_delivery_threshold":50000}'),
   ('payments', '{"enabled":["cod","bank_transfer"]}')
 on conflict (key) do update set value = excluded.value, updated_at = now();
 
 insert into public.site_settings (key, value, type, group_name)
 values
   ('business_name', 'Rana Velvet', 'string', 'brand'),
-  ('showroom_address', 'D Ground, Faisalabad', 'string', 'contact'),
-  ('business_phone', '+92 300 1234567', 'string', 'contact'),
+  ('showroom_address', 'Directions available on Google Maps', 'string', 'contact'),
+  ('business_phone', '', 'string', 'contact'),
   ('business_email', 'info@ranavelvet.com', 'string', 'contact'),
   ('showroom_hours', 'Monday - Saturday: 10:00 AM - 8:00 PM', 'string', 'contact')
 on conflict (key) do update set value = excluded.value, type = excluded.type, group_name = excluded.group_name, updated_at = now();

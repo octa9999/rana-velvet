@@ -74,22 +74,22 @@ export function BookAVisit() {
                   Flagship Showroom
                 </span>
                 <h3 className="font-[family-name:var(--font-playfair)] text-3xl sm:text-4xl lg:text-5xl font-light text-white tracking-tight mb-4 lg:mb-6">
-                  Faisalabad, Pakistan
+                  Rana Velvet Studio
                 </h3>
                 <p className="font-[family-name:var(--font-sans)] text-sm lg:text-base text-white/60 leading-relaxed font-light mb-6 lg:mb-8 max-w-md">
-                  Main Boulevard, D Ground, Faisalabad. Our flagship showroom showcases the complete Rana Velvet collection.
+                  Visit the Rana Velvet studio to explore the complete furniture and fabric collection.
                 </p>
                 <div className="flex flex-col sm:flex-row gap-4 sm:gap-6 mb-6 lg:mb-8">
                   <div className="flex items-center gap-3">
                     <MapPin className="w-5 h-5 text-[var(--gold)]" />
                     <span className="font-[family-name:var(--font-sans)] text-xs sm:text-sm text-white/70">
-                      D Ground, Faisalabad
+                      Google Maps Location Available
                     </span>
                   </div>
                   <div className="flex items-center gap-3">
                     <Phone className="w-5 h-5 text-[var(--gold)]" />
                     <span className="font-[family-name:var(--font-sans)] text-xs sm:text-sm text-white/70">
-                      +92 300 1234567
+                      Contact Number In Admin Settings
                     </span>
                   </div>
                 </div>

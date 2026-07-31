@@ -70,6 +70,18 @@
   color: var(--ink);
 }
 
+.brandMark span {
+  display: grid;
+  width: 22px;
+  height: 22px;
+  place-items: center;
+  border-radius: 50%;
+  background: var(--ink);
+  color: white;
+  font-size: 9px;
+  letter-spacing: 0;
+}
+
 .brandMark::after,
 .navTrigger::after,
 .navTools a::after,

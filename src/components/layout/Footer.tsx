@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react";
 import Link from "next/link";
 import { ArrowRight } from "lucide-react";
-import { officialContactNote } from "@/lib/storefront";
+import { officialContactNote, showroomMapUrl } from "@/lib/storefront";
 import styles from "@/styles/ecommerce.module.css";
 
 export function Footer() {
@@ -28,6 +28,7 @@ export function Footer() {
           <strong>Store details</strong>
           <p className={styles.muted}>{settings.showroom_address || officialContactNote}</p>
           {settings.business_phone && <p className={styles.muted}>{settings.business_phone}</p>}
+          <a className={styles.muted} href={showroomMapUrl} target="_blank" rel="noreferrer">Open Location In Google Maps</a>
         </div>
         <div className={styles.footerLinks}>
           <Link className={styles.secondaryPill} href="/products">Shop</Link>

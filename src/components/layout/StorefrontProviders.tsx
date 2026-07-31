@@ -21,7 +21,7 @@ export function StorefrontProviders({ children }: { children: React.ReactNode })
         <WishlistDrawer />
         {children}
         <a className={styles.helpFloat} href={whatsappHref("Hi Rana Velvet, I need help with the website.")}>
-          WhatsApp Help
+          Talk To Us
         </a>
       </WishlistProvider>
     </CartProvider>

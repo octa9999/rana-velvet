@@ -19,7 +19,7 @@ export default function AboutPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>About Rana Velvet</span>
-          <h1 className={styles.displayTitle}>studio since 1960</h1>
+          <h1 className={styles.displayTitle}>Studio Since 1960</h1>
           <p className={styles.heroCopy}>
             A furniture and fabric house built around touch, proportion, and rooms that feel composed without feeling cold.
           </p>
@@ -29,7 +29,7 @@ export default function AboutPage() {
           <div className={styles.editorialGrid}>
             <div className={styles.editorialCopy}>
               <span className={styles.heroKicker}>Our story</span>
-              <h2>heritage made current</h2>
+              <h2>Heritage Made Current</h2>
               <p>
                 Rana Velvet began as a workshop dedicated to textile excellence. Today the same heritage continues through furniture, curtains, fabrics, and made-to-measure pieces for modern Pakistani homes.
               </p>
@@ -45,9 +45,9 @@ export default function AboutPage() {
         </section>
 
         <section className={styles.darkBand}>
-          <div className={styles.sectionHead}>
+          <div className={`${styles.sectionHead} ${styles.principlesHead}`}>
             <p>Our work is quiet, tactile, and room-led: pieces should support a complete interior instead of fighting for attention.</p>
-            <h2>principles</h2>
+            <h2>Principles</h2>
             <Link className={styles.secondaryPill} href="/products">
               View Collection <ArrowRight size={15} />
             </Link>
@@ -56,7 +56,7 @@ export default function AboutPage() {
             {values.map(([step, title, body]) => (
               <article className={styles.darkCard} key={step}>
                 <span className={styles.heroKicker}>{step}</span>
-                <h2>{title}</h2>
+                <h2>Principle: {title}</h2>
                 <p>{body}</p>
               </article>
             ))}
@@ -68,7 +68,7 @@ export default function AboutPage() {
             <img src="/demohome-zenspace/custom.jpg" alt="Custom Rana Velvet furniture consultation" />
             <div>
               <span className={styles.heroKicker}>Made for homes</span>
-              <h2>custom furniture, fabric edits, and installation support</h2>
+              <h2>Custom Furniture, Fabric Edits, And Installation Support</h2>
               <p className={styles.muted}>
                 Bring room photos, measurements, and references. The studio helps narrow the palette, choose finishes, and shape the order around the home.
               </p>

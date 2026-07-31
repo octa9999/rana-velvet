@@ -17,7 +17,7 @@ export default function ReturnsPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Information</span>
-          <h1 className={styles.displayTitle}>returns</h1>
+          <h1 className={styles.displayTitle}>Returns</h1>
           <p className={styles.heroCopy}>Final returns and exchange wording must be checked by Rana Velvet before launch.</p>
         </section>
         <section className={styles.paperSection}><div className={styles.infoGrid}>{items.map((item) => <article className={styles.infoCard} key={item}><p>{item}</p></article>)}</div></section>

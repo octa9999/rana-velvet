@@ -24,7 +24,7 @@ export default function WishlistPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Saved edit</span>
-          <h1 className={styles.displayTitle}>wishlist</h1>
+          <h1 className={styles.displayTitle}>Wishlist</h1>
           <p className={styles.heroCopy}>
             Keep the pieces you are considering, then move them into your cart when the room direction feels right.
           </p>

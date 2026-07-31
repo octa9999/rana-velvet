@@ -86,7 +86,7 @@ export default function ProductsPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Rana Velvet Collection</span>
-          <h1 className={styles.displayTitle}>shop pieces</h1>
+          <h1 className={styles.displayTitle}>Shop Pieces</h1>
           <p className={styles.heroCopy}>
             Furniture, fabrics, curtains and custom pieces presented with the same quiet editorial rhythm as the Rana Velvet studio.
           </p>
@@ -95,7 +95,7 @@ export default function ProductsPage() {
         <section className={styles.darkBand}>
           <div className={styles.sectionHead}>
             <p>{filtered.length} pieces available. Explore the collection by room, material direction, and furnishing mood.</p>
-            <h2>collections</h2>
+            <h2>Collections</h2>
             <Link className={styles.secondaryPill} href="/contact">
               Talk With Us <ArrowRight size={15} />
             </Link>

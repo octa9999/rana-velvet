@@ -2,10 +2,10 @@
 
 import { FormEvent, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, CheckCircle2, Clock, Mail, MapPin, Phone } from "lucide-react";
+import { ArrowRight, CheckCircle2, Mail, MapPin, Phone } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { officialContactNote, whatsappHref } from "@/lib/storefront";
+import { officialContactNote, showroomMapUrl, whatsappHref } from "@/lib/storefront";
 import styles from "@/styles/ecommerce.module.css";
 
 const contactNotes = [
@@ -16,18 +16,13 @@ const contactNotes = [
   },
   {
     icon: Phone,
-    title: "Phone or WhatsApp",
-    body: "Add verified number before launch",
+    title: "Contact Number",
+    body: "Managed From Admin Settings",
   },
   {
     icon: Mail,
     title: "Studio email",
     body: "Add verified email before launch",
-  },
-  {
-    icon: Clock,
-    title: "Showroom hours",
-    body: "Monday to Saturday, 10:00 AM to 8:00 PM",
   },
 ];
 
@@ -68,7 +63,7 @@ export default function ContactPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Contact Rana Velvet</span>
-          <h1 className={styles.displayTitle}>talk with us</h1>
+          <h1 className={styles.displayTitle}>Talk With Us</h1>
           <p className={styles.heroCopy}>
             Share your room, furniture, fabric, or furnishing requirement with the studio. Our team will guide you with a considered next step.
           </p>
@@ -77,7 +72,7 @@ export default function ContactPage() {
         <section className={styles.paperSection}>
           <div className={styles.contentGrid}>
             <form className={styles.formCard} onSubmit={submit}>
-              <h2>send a message</h2>
+              <h2>Send A Message</h2>
               <div className={styles.formGrid} style={{ marginTop: 28 }}>
                 <label className={styles.field}>
                   <span>Name</span>
@@ -145,7 +140,7 @@ export default function ContactPage() {
 
             <aside className={styles.summaryCard}>
               <span className={styles.heroKicker}>Studio desk</span>
-              <h2>Faisalabad, made personal</h2>
+              <h2>Made Personal</h2>
               <p className={styles.muted} style={{ marginTop: 14, lineHeight: 1.55 }}>
                 For product questions, room styling, custom furniture, fabric selection, and showroom visits, send the details here or book a dedicated consultation.
               </p>
@@ -163,11 +158,14 @@ export default function ContactPage() {
                   );
                 })}
               </div>
+              <a className={styles.secondaryPill} href={showroomMapUrl} target="_blank" rel="noreferrer" style={{ width: "100%", marginTop: 14 }}>
+                Open Location In Google Maps <ArrowRight size={15} />
+              </a>
               <Link className={styles.secondaryPill} href="/consultation" style={{ width: "100%" }}>
                 Book a consultation <ArrowRight size={15} />
               </Link>
               <Link className={styles.whatsappButton} href={whatsappHref("Hi Rana Velvet, I need help with a website inquiry.")} style={{ width: "100%", marginTop: 10 }}>
-                WhatsApp
+                Talk To Us
               </Link>
             </aside>
           </div>
@@ -176,7 +174,7 @@ export default function ContactPage() {
         <section className={styles.darkBand}>
           <div className={styles.sectionHead}>
             <p>For complete interiors, bring measurements, room photos, fabric references, or inspiration images when you visit the showroom.</p>
-            <h2>studio care</h2>
+            <h2>Studio Care</h2>
             <Link className={styles.secondaryPill} href="/products">
               View Collection <ArrowRight size={15} />
             </Link>

@@ -3,21 +3,41 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowLeft, ArrowRight, Minus, Plus, ShoppingBag, Trash2 } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
-import { useCart } from "@/context/CartContext";
+import { type CartItem, useCart } from "@/context/CartContext";
+import { readyMadeCurtains } from "@/lib/storefront";
 import styles from "@/styles/ecommerce.module.css";
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString("en-PK")}`;
 }
 
+type RecommendedProduct = Omit<CartItem, "quantity" | "color"> & { color?: string; colors?: string[] };
+
 export default function CartPage() {
-  const { items, updateQuantity, removeItem } = useCart();
+  const { items, updateQuantity, removeItem, addItem } = useCart();
+  const [recommendations, setRecommendations] = useState<RecommendedProduct[]>([]);
   const subtotal = items.reduce((sum, item) => sum + item.price * item.quantity, 0);
   const delivery = subtotal > 50000 || subtotal === 0 ? 0 : 2500;
   const total = subtotal + delivery;
+
+  useEffect(() => {
+    if (!items.length) return;
+    const isNotInCart = (product: RecommendedProduct) => !items.some((item) => item.id === product.id);
+    setRecommendations(readyMadeCurtains.filter(isNotInCart).slice(0, 3));
+    fetch("/api/catalog/products")
+      .then((response) => response.json())
+      .then((payload) => {
+        if (!Array.isArray(payload.products)) return;
+        setRecommendations(
+          payload.products.filter(isNotInCart).slice(0, 3)
+        );
+      })
+      .catch(() => setRecommendations([]));
+  }, [items]);
 
   return (
     <div className={styles.shell}>
@@ -25,7 +45,7 @@ export default function CartPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Order review</span>
-          <h1 className={styles.displayTitle}>your cart</h1>
+          <h1 className={styles.displayTitle}>Your Cart</h1>
           <p className={styles.heroCopy}>
             Review proportions, finishes, and quantities before moving into the checkout flow.
           </p>
@@ -75,7 +95,7 @@ export default function CartPage() {
               </div>
 
               <aside className={styles.summaryCard}>
-                <h2>summary</h2>
+                <h2>Summary</h2>
                 <div className={styles.summaryRows}>
                   <div><span>Subtotal</span><strong>{formatPrice(subtotal)}</strong></div>
                   <div><span>Delivery</span><strong>{delivery === 0 ? "Calculated after confirmation" : formatPrice(delivery)}</strong></div>
@@ -92,6 +112,39 @@ export default function CartPage() {
                 </Link>
               </aside>
             </div>
+          )}
+
+          {items.length > 0 && recommendations.length > 0 && (
+            <section style={{ maxWidth: 1400, margin: "56px auto 0" }}>
+              <div style={{ borderTop: "1px solid var(--line)", paddingTop: 22, display: "grid", gap: 8 }}>
+                <span className={styles.heroKicker}>Complete The Room</span>
+                <h2 style={{ color: "var(--ink)", fontSize: "clamp(2.25rem, 4vw, 4.5rem)", lineHeight: 1, margin: 0 }}>Recommended For Your Room</h2>
+                <p className={styles.muted}>Pieces selected from the current collection.</p>
+              </div>
+              <div className={styles.productGrid} style={{ marginTop: 28 }}>
+                {recommendations.map((product) => (
+                  <article className={styles.productCard} key={product.id}>
+                    <Link className={styles.productMedia} href={`/products/${product.slug}`}>
+                      <img src={product.image} alt={product.name} />
+                    </Link>
+                    <div className={styles.productMeta}>
+                      <div>
+                        <small>{product.category}</small>
+                        <h3>{product.name}</h3>
+                        <strong>{formatPrice(product.price)}</strong>
+                      </div>
+                      <button
+                        className={styles.primaryPill}
+                        onClick={() => addItem({ ...product, color: product.colors?.[0] || product.color || "Default", quantity: 1 })}
+                        type="button"
+                      >
+                        Add To Cart
+                      </button>
+                    </div>
+                  </article>
+                ))}
+              </div>
+            </section>
           )}
         </section>
       </main>

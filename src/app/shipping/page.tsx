@@ -19,7 +19,7 @@ export default function ShippingPage() {
       <main>
         <section className={`${styles.hero} ${styles.heroCompact}`}>
           <span className={styles.heroKicker}>Information</span>
-          <h1 className={styles.displayTitle}>shipping</h1>
+          <h1 className={styles.displayTitle}>Shipping</h1>
           <p className={styles.heroCopy}>Delivery details below are launch-ready placeholders and should be checked by Rana Velvet before publishing final wording.</p>
         </section>
         <section className={styles.paperSection}>

@@ -11,19 +11,20 @@ const headerGroups = [
     label: "Home",
     href: "/",
     note: "Rana Velvet",
-    items: ["Curtains collection", "Room-led furniture", "Design process", "Talk with us"],
+    isDirect: true,
+    items: [],
   },
   {
     label: "Shop",
     href: "/products",
     note: "Shop the house",
-    items: ["Bedroom", "Living Room", "Sofas & Seating", "Curtains & Fabrics"],
+    items: ["Bedroom", "Living Room", "Sofas & Seating", "Ready-Made Curtains"],
   },
   {
     label: "Customize Curtain",
     href: "/customize-curtain",
-    note: "Made to measure",
-    items: ["I have measurements", "Book a measurement visit", "Fabric options", "Installation request"],
+    note: "Made To Measure",
+    items: ["I Have Measurements", "Book A Measurement Visit", "Fabric Options", "Installation Request"],
   },
   {
     label: "Custom Furniture",
@@ -100,7 +101,7 @@ const categories = [
   ["Bedroom", "Layered comfort and tailored sleeping spaces."],
   ["Living Room", "Statement seating built for daily gathering."],
   ["Sofas & Seating", "Soft proportions, velvet textures, ergonomic support."],
-  ["Curtains & Fabrics", "Drapery, sheers, and signature fabric finishes."],
+  ["Ready-Made Curtains", "Drapery, sheers, and signature fabric finishes."],
   ["Home Decor", "Tables, accents, and finishing pieces."],
   ["Custom Furniture", "Made-to-measure pieces for distinctive rooms."],
 ];
@@ -117,6 +118,7 @@ export function DemoHomePage() {
       <section className={styles.hero}>
         <nav className={styles.topNav} aria-label="Demo navigation">
           <Link className={styles.brandMark} href="/">
+            <span aria-hidden="true">RV</span>
             Rana Velvet
           </Link>
           <details className={styles.mobileMenu}>
@@ -146,9 +148,9 @@ export function DemoHomePage() {
               <div className={styles.navGroup} key={group.label}>
                 <Link className={styles.navTrigger} href={group.href}>
                   {group.label}
-                  <ArrowRight size={13} />
+                  {!group.isDirect && <ArrowRight size={13} />}
                 </Link>
-                <div className={styles.megaPanel}>
+                {!group.isDirect && <div className={styles.megaPanel}>
                   <div>
                     <span>{group.note}</span>
                     <strong>{group.label}</strong>
@@ -161,7 +163,7 @@ export function DemoHomePage() {
                       </Link>
                     ))}
                   </div>
-                </div>
+                </div>}
               </div>
             ))}
           </div>
@@ -181,7 +183,7 @@ export function DemoHomePage() {
           <div className={styles.heroShade} aria-hidden="true" />
           <div className={styles.heroContent}>
             <span>Curtains Collection - 2025</span>
-            <h1>Fabric that changes the room.</h1>
+            <h1>Fabric That Changes The Room.</h1>
             <p>
               Elevated, considered drape and made for home comfort-designed to
               soften light and give every space a more finished presence.
@@ -201,8 +203,8 @@ export function DemoHomePage() {
 
       <section className={styles.studio}>
         <div className={styles.studioTitle}>
-          <h2>we design</h2>
-          <h2>with restraint</h2>
+          <h2>We Design</h2>
+          <h2>With Restraint</h2>
         </div>
         <div className={styles.studioGrid}>
           <div className={styles.studioCard}>
@@ -229,7 +231,7 @@ export function DemoHomePage() {
             Explore room-led edits across furniture, fabrics, drapery, and
             made-to-measure pieces for a complete interior.
           </p>
-          <h2>collections</h2>
+          <h2>Collections</h2>
           <Link href="/products">
             Shop Now <ArrowRight size={15} />
           </Link>
@@ -266,7 +268,7 @@ export function DemoHomePage() {
 
       <section className={styles.categoryStudio}>
         <div>
-          <h2>made for rooms</h2>
+          <h2>Made For Rooms</h2>
           <p>
             Instead of forcing every category into the same card, each range is
             treated like a room direction: what it solves, what it feels like,
@@ -286,7 +288,7 @@ export function DemoHomePage() {
 
       <section className={styles.process}>
         <div className={styles.processHead}>
-          <h2>design process</h2>
+          <h2>Design Process</h2>
           <Link href="/consultation">
             Book Consultation <ArrowRight size={15} />
           </Link>

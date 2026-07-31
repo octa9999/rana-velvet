@@ -14,7 +14,7 @@ export default function PrivacyPage() {
     <div className={styles.shell}>
       <Header />
       <main>
-        <section className={`${styles.hero} ${styles.heroCompact}`}><span className={styles.heroKicker}>Information</span><h1 className={styles.displayTitle}>privacy</h1><p className={styles.heroCopy}>A simple customer-friendly privacy summary for review before launch.</p></section>
+        <section className={`${styles.hero} ${styles.heroCompact}`}><span className={styles.heroKicker}>Information</span><h1 className={styles.displayTitle}>Privacy</h1><p className={styles.heroCopy}>A simple customer-friendly privacy summary for review before launch.</p></section>
         <section className={styles.paperSection}><div className={styles.infoGrid}>{items.map((item) => <article className={styles.infoCard} key={item}><p>{item}</p></article>)}</div></section>
       </main>
       <Footer />

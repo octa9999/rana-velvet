@@ -24,7 +24,10 @@ export const readyMadeCurtains = [
 ];
 
 export const officialContactNote =
-  "Store phone, WhatsApp, address, and delivery promises must be verified by Rana Velvet before launch.";
+  "Use the Google Maps location below for directions. Contact details are managed from the admin settings.";
+
+export const showroomMapUrl =
+  "https://www.google.com/maps/place/31%C2%B025'16.2%22N+73%C2%B006'49.0%22E/@31.4211788,73.1110344,17z/data=!3m1!4b1!4m4!3m3!8m2!3d31.4211788!4d73.1136093?hl=en&entry=ttu&g_ep=EgoyMDI2MDcyNi4wIKXMDSoASAFQAw%3D%3D";
 
 export function referenceNumber(prefix: string) {
   const date = new Date();
