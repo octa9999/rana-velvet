@@ -55,3 +55,10 @@ test("storefront command buttons use restrained corners", () => {
   const styles = read("src/styles/ecommerce.module.css");
   assert.match(styles, /\.primaryPill,\s*\.secondaryPill\s*\{[\s\S]*?border-radius:\s*8px;/);
 });
+
+test("display headings reserve room for descenders before adjacent content", () => {
+  const styles = read("src/styles/ecommerce.module.css");
+  assert.match(styles, /\.sectionHead\s*\{[\s\S]*?margin:\s*0 auto 32px;/);
+  assert.match(styles, /\.principlesHead h2\s*\{[\s\S]*?line-height:\s*1\.02;/);
+  assert.match(styles, /\.darkCard h2\s*\{[\s\S]*?line-height:\s*1\.02;/);
+});

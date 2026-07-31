@@ -160,7 +160,7 @@
   display: block;
   margin-top: 4px;
   font-size: 26px;
-  line-height: 0.9;
+  line-height: 1.05;
   letter-spacing: -0.05em;
 }
 
@@ -212,7 +212,7 @@
   max-width: 1420px;
   margin: 0 auto;
   font-size: clamp(4.8rem, 13vw, 15rem);
-  line-height: 0.86;
+  line-height: 0.98;
   font-weight: 500;
   letter-spacing: -0.09em;
   text-align: center;
@@ -239,7 +239,7 @@
   gap: 36px;
   align-items: center;
   max-width: 1400px;
-  margin: 0 auto;
+  margin: 0 auto 32px;
   border-top: 1px solid rgba(255, 255, 255, 0.26);
   padding-top: 38px;
 }
@@ -255,7 +255,7 @@
 .sectionHead h2 {
   margin: 0;
   font-size: clamp(4rem, 9vw, 10rem);
-  line-height: 0.9;
+  line-height: 1.02;
   font-weight: 500;
   letter-spacing: -0.075em;
   text-align: right;
@@ -263,7 +263,7 @@
 
 .principlesHead h2 {
   font-size: clamp(3.6rem, 6vw, 6.8rem);
-  line-height: 1;
+  line-height: 1.02;
   letter-spacing: 0;
   overflow-wrap: anywhere;
 }
@@ -421,7 +421,7 @@
   justify-self: end;
   text-align: right;
   font-size: clamp(1.25rem, 2vw, 2.1rem);
-  line-height: 0.94;
+  line-height: 1.04;
   font-weight: 500;
 }
 
@@ -518,7 +518,7 @@
 .emptyState h2 {
   margin: 0;
   font-size: clamp(3rem, 6vw, 7rem);
-  line-height: 0.88;
+  line-height: 1.02;
   font-weight: 500;
   letter-spacing: -0.075em;
 }
@@ -764,7 +764,7 @@
 .checklistCard h3 {
   margin: 14px 0 10px;
   font-size: clamp(1.5rem, 2.2vw, 2.6rem);
-  line-height: 0.96;
+  line-height: 1.04;
   font-weight: 500;
   letter-spacing: -0.05em;
 }
@@ -907,7 +907,7 @@
 .detailTitle {
   margin: 0;
   font-size: clamp(4rem, 8.5vw, 9.8rem);
-  line-height: 0.88;
+  line-height: 1;
   font-weight: 500;
   letter-spacing: -0.085em;
 }
@@ -942,7 +942,7 @@
 .darkCard h2 {
   margin: 0 0 28px;
   font-size: clamp(2.4rem, 5vw, 5rem);
-  line-height: 0.85;
+  line-height: 1.02;
   font-weight: 500;
   letter-spacing: -0.06em;
 }
@@ -1014,7 +1014,7 @@
 
 .footerTitle {
   font-size: clamp(5rem, 14vw, 17rem);
-  line-height: 0.86;
+  line-height: 0.98;
   font-weight: 500;
   letter-spacing: -0.09em;
   text-align: center;
