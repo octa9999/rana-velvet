@@ -86,7 +86,7 @@ export default function CartPage() {
                         <button onClick={() => updateQuantity(item.id, 1)} type="button" aria-label={`Increase ${item.name} quantity`}><Plus size={14} /></button>
                       </div>
                     </div>
-                    <button className={styles.secondaryPill} onClick={() => removeItem(item.id)} type="button" aria-label={`Remove ${item.name}`}>
+                    <button className={styles.cartRemoveAction} onClick={() => removeItem(item.id)} type="button" aria-label={`Remove ${item.name}`}>
                       <Trash2 size={15} />
                       Remove
                     </button>

@@ -43,3 +43,15 @@ test("footer always directs visitors to the approved Google Maps location", () =
   assert.match(footer, /showroomMapUrl/);
   assert.doesNotMatch(footer, /settings\.showroom_address/);
 });
+
+test("cart removal is a compact dedicated action instead of a stretched pill", () => {
+  const cart = read("src/app/cart/page.tsx");
+  const styles = read("src/styles/ecommerce.module.css");
+  assert.match(cart, /styles\.cartRemoveAction/);
+  assert.match(styles, /\.cartRemoveAction\s*\{[\s\S]*?align-self:\s*center;[\s\S]*?min-height:\s*42px;[\s\S]*?border-radius:\s*8px;/);
+});
+
+test("storefront command buttons use restrained corners", () => {
+  const styles = read("src/styles/ecommerce.module.css");
+  assert.match(styles, /\.primaryPill,\s*\.secondaryPill\s*\{[\s\S]*?border-radius:\s*8px;/);
+});
