@@ -68,3 +68,9 @@ test("collection toolbar keeps search and sort controls legible on dark backgrou
   assert.match(styles, /\.darkBand \.field input,\s*\.darkBand \.field select\s*\{[\s\S]*?background:\s*rgba\(255, 255, 255, 0\.08\);[\s\S]*?color:\s*white;/);
   assert.match(styles, /\.darkBand \.field input::placeholder\s*\{[\s\S]*?color:\s*rgba\(255, 255, 255, 0\.68\);/);
 });
+
+test("demo studio title keeps its words together as one display line", () => {
+  const styles = read("src/components/demohome/DemoHomePage.module.css");
+  assert.match(styles, /\.studioTitle\s*\{[^}]*justify-content:\s*flex-start;[^}]*gap:\s*16px;/);
+  assert.match(styles, /\.studioTitle h2:last-child\s*\{[^}]*text-align:\s*left;/);
+});
