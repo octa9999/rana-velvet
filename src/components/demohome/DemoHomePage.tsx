@@ -340,13 +340,6 @@ export function DemoHomePage() {
         </div>
         <strong><Image src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={96} height={96} />Rana Velvet</strong>
         <div className={styles.footerLinks}>
-          <nav aria-label="Footer categories">
-            {categories.map(([label]) => (
-              <Link key={label} href="/products">
-                {label}
-              </Link>
-            ))}
-          </nav>
           <div className={styles.socialLinks} aria-label="Social links">
             <Link href="/" aria-label="Instagram">
               IG

@@ -74,3 +74,10 @@ test("demo studio title keeps its words together as one display line", () => {
   assert.match(styles, /\.studioTitle\s*\{[^}]*justify-content:\s*flex-start;[^}]*gap:\s*16px;/);
   assert.match(styles, /\.studioTitle h2:last-child\s*\{[^}]*text-align:\s*left;/);
 });
+
+test("demo footer omits the category strip while keeping its contact utilities", () => {
+  const demoHome = read("src/components/demohome/DemoHomePage.tsx");
+  assert.doesNotMatch(demoHome, /Footer categories/);
+  assert.match(demoHome, /styles\.socialLinks/);
+  assert.match(demoHome, /showroomMapUrl/);
+});
