@@ -1034,7 +1034,7 @@
 }
 
 .footerTitle {
-  font-size: clamp(5rem, 14vw, 17rem);
+  font-size: clamp(3.75rem, 14vw, 17rem);
   line-height: 0.98;
   font-weight: 500;
   letter-spacing: -0.09em;
@@ -1199,6 +1199,14 @@
   .toolbar,
   .footerGrid {
     grid-template-columns: 1fr;
+    justify-items: center;
+    text-align: center;
+  }
+  .footerGrid > .primaryPill {
+    justify-self: center;
+  }
+  .footerGrid .footerLinks {
+    justify-content: center;
   }
   .sectionHead h1,
   .sectionHead h2 {

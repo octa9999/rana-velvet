@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import Image from "next/image";
 import { ArrowRight } from "lucide-react";
 import { officialContactNote, showroomMapUrl } from "@/lib/storefront";
 import styles from "@/styles/ecommerce.module.css";
@@ -23,7 +22,6 @@ export function Footer() {
   return (
     <footer className={styles.footer}>
       <div className={styles.footerIdentity}>
-        <Image src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={96} height={96} />
         <div className={styles.footerTitle}>{settings.business_name}</div>
       </div>
       <div className={styles.footerGrid}>

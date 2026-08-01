@@ -28,13 +28,11 @@ test("custom curtain requests ask for pieces and accessories instead of windows"
   assert.doesNotMatch(curtains, /Pieces\/windows/);
 });
 
-test("the supplied Rana Velvet logo is used across the storefront and as the app icon", () => {
+test("the supplied Rana Velvet logo is used in the header and as the app icon", () => {
   const header = read("src/components/layout/Header.tsx");
   const demoHome = read("src/components/demohome/DemoHomePage.tsx");
-  const footer = read("src/components/layout/Footer.tsx");
   assert.match(header, /rana-velvet-logo\.png/);
   assert.match(demoHome, /rana-velvet-logo\.png/);
-  assert.match(footer, /rana-velvet-logo\.png/);
   assert.ok(existsSync(new URL("../src/app/icon.png", import.meta.url)));
 });
 
@@ -80,4 +78,16 @@ test("demo footer omits the category strip while keeping its contact utilities",
   assert.doesNotMatch(demoHome, /Footer categories/);
   assert.match(demoHome, /styles\.socialLinks/);
   assert.match(demoHome, /showroomMapUrl/);
+});
+
+test("footers remove logo images and center their mobile content", () => {
+  const footer = read("src/components/layout/Footer.tsx");
+  const demoHome = read("src/components/demohome/DemoHomePage.tsx");
+  const storefrontStyles = read("src/styles/ecommerce.module.css");
+  const demoStyles = read("src/components/demohome/DemoHomePage.module.css");
+
+  assert.doesNotMatch(footer, /rana-velvet-logo\.png/);
+  assert.doesNotMatch(demoHome, /<strong><Image src="\/rana-velvet-logo\.png"/);
+  assert.match(storefrontStyles, /@media \(max-width: 980px\) \{[\s\S]*?\.footerGrid\s*\{[\s\S]*?text-align:\s*center;/);
+  assert.match(demoStyles, /@media \(max-width: 900px\) \{[\s\S]*?\.footerInfo p:nth-child\(3\)\s*\{[\s\S]*?text-align:\s*center;/);
 });

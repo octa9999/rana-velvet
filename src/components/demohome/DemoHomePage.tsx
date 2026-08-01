@@ -338,7 +338,7 @@ export function DemoHomePage() {
           <p>Talk To Us Through The Contact Form.</p>
           <p><a href={showroomMapUrl} target="_blank" rel="noreferrer">Get Directions On Google Maps</a></p>
         </div>
-        <strong><Image src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={96} height={96} />Rana Velvet</strong>
+        <strong>Rana Velvet</strong>
         <div className={styles.footerLinks}>
           <div className={styles.socialLinks} aria-label="Social links">
             <Link href="/" aria-label="Instagram">
