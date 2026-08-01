@@ -18,6 +18,7 @@ type ProductCard = {
   slug: string;
   price: number;
   category: string;
+  subcategory?: string;
   description: string;
   image: string;
 };
@@ -36,6 +37,20 @@ const seedProducts: ProductCard[] = [
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString("en-PK")}`;
+}
+
+function matchesCategory(product: ProductCard, category: string) {
+  if (category === "All") return true;
+
+  const values = [product.category, product.subcategory]
+    .filter(Boolean)
+    .map((value) => value!.toLowerCase());
+  const target = category.toLowerCase();
+
+  if (target === "sofas") return values.some((value) => value.includes("sofa") || value.includes("seating"));
+  if (target === "curtains") return values.some((value) => value.includes("curtain"));
+
+  return values.includes(target);
 }
 
 export default function ProductsPage() {
@@ -63,15 +78,15 @@ export default function ProductsPage() {
     }
   }, []);
 
-  const categories = ["All", "Bedroom", "Sofas", "Living Room", "Curtains", "Accessories", ...Array.from(new Set(products.map((product) => product.category).filter(Boolean)))].filter(
-    (category, index, list) => list.indexOf(category) === index
+  const categories = ["All", "Bedroom", "Sofas", "Living Room", "Curtains", ...Array.from(new Set(products.map((product) => product.category).filter(Boolean)))].filter(
+    (category, index, list) => list.indexOf(category) === index && (category === "All" || products.some((product) => matchesCategory(product, category)))
   );
   const filtered = products
-    .filter((product) => activeCategory === "All" || product.category === activeCategory || (activeCategory === "Sofas" && product.category === "Seating"))
+    .filter((product) => matchesCategory(product, activeCategory))
     .filter((product) => {
       const query = searchTerm.trim().toLowerCase();
       if (!query) return true;
-      return `${product.name} ${product.category} ${product.description}`.toLowerCase().includes(query);
+      return `${product.name} ${product.category} ${product.subcategory || ""} ${product.description}`.toLowerCase().includes(query);
     })
     .sort((a, b) => {
       if (sortBy === "price-low") return a.price - b.price;

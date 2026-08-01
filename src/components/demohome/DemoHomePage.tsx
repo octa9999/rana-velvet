@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { ArrowRight, Heart, Search, ShoppingBag } from "lucide-react";
-import { showroomMapUrl } from "@/lib/storefront";
+import { HomeFooter } from "@/components/layout/HomeFooter";
 import styles from "./DemoHomePage.module.css";
 
 const asset = (file: string) => `/demohome-zenspace/${file}`;
@@ -329,30 +329,7 @@ export function DemoHomePage() {
         </div>
       </section>
 
-      <footer className={styles.footer}>
-        <div className={styles.footerInfo}>
-          <p>
-            We are dedicated to offering discerning clientele a curated
-            selection of furniture that embodies timeless elegance.
-          </p>
-          <p>Talk To Us Through The Contact Form.</p>
-          <p><a href={showroomMapUrl} target="_blank" rel="noreferrer">Get Directions On Google Maps</a></p>
-        </div>
-        <strong>Rana Velvet</strong>
-        <div className={styles.footerLinks}>
-          <div className={styles.socialLinks} aria-label="Social links">
-            <Link href="/" aria-label="Instagram">
-              IG
-            </Link>
-            <Link href="/" aria-label="Facebook">
-              FB
-            </Link>
-            <Link href="/" aria-label="LinkedIn">
-              IN
-            </Link>
-          </div>
-        </div>
-      </footer>
+      <HomeFooter />
     </main>
   );
 }

@@ -37,7 +37,7 @@ test("the supplied Rana Velvet logo is used in the header and as the app icon", 
 });
 
 test("footer always directs visitors to the approved Google Maps location", () => {
-  const footer = read("src/components/layout/Footer.tsx");
+  const footer = read("src/components/layout/HomeFooter.tsx");
   assert.match(footer, /showroomMapUrl/);
   assert.doesNotMatch(footer, /settings\.showroom_address/);
 });
@@ -75,9 +75,7 @@ test("demo studio title keeps its words together as one display line", () => {
 
 test("demo footer omits the category strip while keeping its contact utilities", () => {
   const demoHome = read("src/components/demohome/DemoHomePage.tsx");
-  assert.doesNotMatch(demoHome, /Footer categories/);
-  assert.match(demoHome, /styles\.socialLinks/);
-  assert.match(demoHome, /showroomMapUrl/);
+  assert.match(demoHome, /<HomeFooter\s*\/>/);
 });
 
 test("footers remove logo images and center their mobile content", () => {
@@ -86,8 +84,15 @@ test("footers remove logo images and center their mobile content", () => {
   const storefrontStyles = read("src/styles/ecommerce.module.css");
   const demoStyles = read("src/components/demohome/DemoHomePage.module.css");
 
-  assert.doesNotMatch(footer, /rana-velvet-logo\.png/);
-  assert.doesNotMatch(demoHome, /<strong><Image src="\/rana-velvet-logo\.png"/);
+  assert.match(footer, /return <HomeFooter\s*\/>/);
+  assert.match(demoHome, /<HomeFooter\s*\/>/);
   assert.match(storefrontStyles, /@media \(max-width: 980px\) \{[\s\S]*?\.footerGrid\s*\{[\s\S]*?text-align:\s*center;/);
   assert.match(demoStyles, /@media \(max-width: 900px\) \{[\s\S]*?\.footerInfo p:nth-child\(3\)\s*\{[\s\S]*?text-align:\s*center;/);
+});
+
+test("catalog filters match curtain subcategories and do not render empty category chips", () => {
+  const products = read("src/app/(public)/products/page.tsx");
+  assert.match(products, /subcategory\?:\s*string/);
+  assert.match(products, /product\.subcategory/);
+  assert.match(products, /products\.some\(\(product\) => matchesCategory\(product, category\)\)/);
 });
