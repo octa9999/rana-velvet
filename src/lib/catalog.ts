@@ -193,7 +193,7 @@ export async function listCategories() {
     .order("sort_order", { ascending: true })
     .order("name", { ascending: true });
 
-  if (error || !data) {
+  if (error || !data?.length) {
     console.error("Category list failed", error);
     return fallbackCategories;
   }

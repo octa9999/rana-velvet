@@ -3,7 +3,7 @@
 import { useEffect, useMemo, useRef, useState } from "react";
 import Link from "next/link";
 import { Edit3, Eye, ImagePlus, PackagePlus, Search, SlidersHorizontal, Trash2 } from "lucide-react";
-import { AdminProduct, adminProducts, formatAdminPrice, type AdminCategory } from "@/lib/admin-data";
+import { AdminProduct, adminCategories, adminProducts, formatAdminPrice, type AdminCategory } from "@/lib/admin-data";
 
 const emptyProduct: AdminProduct = {
   id: "",
@@ -27,7 +27,7 @@ export default function AdminProductsPage() {
   const [query, setQuery] = useState("");
   const [status, setStatus] = useState("all");
   const [editing, setEditing] = useState<AdminProduct | null>(null);
-  const [categories, setCategories] = useState<AdminCategory[]>([]);
+  const [categories, setCategories] = useState<AdminCategory[]>(adminCategories);
   const [notice, setNotice] = useState("");
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
@@ -44,7 +44,7 @@ export default function AdminProductsPage() {
     fetch("/api/admin/categories")
       .then((response) => response.json())
       .then((payload) => {
-        if (Array.isArray(payload.categories)) setCategories(payload.categories);
+        if (Array.isArray(payload.categories) && payload.categories.length) setCategories(payload.categories);
       })
       .catch(() => null);
   }, []);
@@ -61,7 +61,7 @@ export default function AdminProductsPage() {
     if (!editing) return;
     const normalized = {
       ...editing,
-      id: editing.id || `rv-${Date.now()}`,
+      id: editing.id || undefined,
       slug: editing.slug || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
       sku: editing.sku || `RV-${Date.now().toString().slice(-5)}`,
       image: editing.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
@@ -75,7 +75,8 @@ export default function AdminProductsPage() {
 
     if (!response.ok) {
       const payload = await response.json().catch(() => null);
-      setNotice(payload?.error || "Product saved locally, but Supabase rejected the write.");
+      setNotice(payload?.error || "Supabase rejected the product save. Please review the fields and try again.");
+      return;
     }
 
     await loadProducts();
@@ -86,7 +87,12 @@ export default function AdminProductsPage() {
   const removeProduct = async (id: string) => {
     const product = products.find((item) => item.id === id);
     if (!window.confirm(`Delete ${product?.name || "this product"}? This cannot be undone in production.`)) return;
-    await fetch(`/api/admin/products/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => null);
+    const response = await fetch(`/api/admin/products/${encodeURIComponent(id)}`, { method: "DELETE" }).catch(() => null);
+    if (!response?.ok) {
+      const payload = await response?.json().catch(() => null);
+      setNotice(payload?.error || "Supabase rejected the product deletion. The product is still listed.");
+      return;
+    }
     setProducts((current) => current.filter((item) => item.id !== id));
     setNotice(`${product?.name || "Product"} deleted from Supabase.`);
   };

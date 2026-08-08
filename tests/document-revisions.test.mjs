@@ -96,3 +96,17 @@ test("catalog filters match curtain subcategories and do not render empty catego
   assert.match(products, /product\.subcategory/);
   assert.match(products, /products\.some\(\(product\) => matchesCategory\(product, category\)\)/);
 });
+
+test("empty Supabase category tables preserve the storefront fallback taxonomy", () => {
+  const catalog = read("src/lib/catalog.ts");
+  const categoriesFunction = catalog.slice(catalog.indexOf("export async function listCategories"), catalog.indexOf("export async function upsertProduct"));
+  assert.match(categoriesFunction, /if \(error \|\| !data\?\.length\) \{/);
+  assert.match(categoriesFunction, /return fallbackCategories;/);
+});
+
+test("admin product writes keep the editor open and report failed saves or deletes", () => {
+  const products = read("src/app/(admin)/admin/products/page.tsx");
+  assert.match(products, /id: editing\.id \|\| undefined/);
+  assert.match(products, /if \(!response\.ok\) \{[\s\S]*?setNotice\([\s\S]*?return;/);
+  assert.match(products, /const response = await fetch\([\s\S]*?method: "DELETE"[\s\S]*?if \(!response\.ok\) \{[\s\S]*?return;/);
+});
