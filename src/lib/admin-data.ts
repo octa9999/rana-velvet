@@ -13,6 +13,8 @@ export type AdminProduct = {
   sku: string;
   material: string;
   color: string;
+  description: string;
+  images: string[];
 };
 
 export type AdminCategory = {
@@ -51,6 +53,8 @@ export const adminProducts: AdminProduct[] = [
     sku: "RV-BED-001",
     material: "Velvet / solid wood",
     color: "Emerald",
+    description: "Premium velvet upholstered bed with a reinforced solid wood frame.",
+    images: ["https://images.unsplash.com/photo-1505693416388-ac5ce068fe85?w=800&q=80"],
   },
   {
     id: "rv-002",
@@ -67,6 +71,8 @@ export const adminProducts: AdminProduct[] = [
     sku: "RV-SOF-002",
     material: "Premium velvet",
     color: "Pearl",
+    description: "Three-seater plush sofa in premium velvet fabric.",
+    images: ["https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80"],
   },
   {
     id: "rv-003",
@@ -83,6 +89,8 @@ export const adminProducts: AdminProduct[] = [
     sku: "RV-OTT-003",
     material: "Velvet / storage frame",
     color: "Charcoal",
+    description: "Multi-functional ottoman with a practical storage compartment.",
+    images: ["https://images.unsplash.com/photo-1540574163026-643ea20ade25?w=800&q=80"],
   },
   {
     id: "rv-004",
@@ -99,6 +107,8 @@ export const adminProducts: AdminProduct[] = [
     sku: "RV-CUR-004",
     material: "Heavy velvet",
     color: "Champagne",
+    description: "Premium heavy velvet curtains with an elegant, finished drape.",
+    images: ["https://images.unsplash.com/photo-1513694203232-719a280e022f?w=800&q=80"],
   },
 ];
 

@@ -110,3 +110,31 @@ test("admin product writes keep the editor open and report failed saves or delet
   assert.match(products, /if \(!response\.ok\) \{[\s\S]*?setNotice\([\s\S]*?return;/);
   assert.match(products, /const response = await fetch\([\s\S]*?method: "DELETE"[\s\S]*?if \(!response\.ok\) \{[\s\S]*?return;/);
 });
+
+test("product editor persists the complete customer-facing product information", () => {
+  const products = read("src/app/(admin)/admin/products/page.tsx");
+  const api = read("src/app/api/admin/products/route.ts");
+  const catalog = read("src/lib/catalog.ts");
+
+  assert.match(products, /Product description/);
+  assert.match(products, /Picture URLs/);
+  assert.match(products, /images: editing\.images\?\.length \? editing\.images : parseImageUrls\(editing\.image\)/);
+  assert.match(api, /images: z\.array\(z\.string\(\)\.url\(\)\)\.optional\(\)/);
+  assert.match(catalog, /const imageUrls = Array\.from\(new Set\(/);
+  assert.match(catalog, /await supabase\.from\("product_images"\)\.delete\(\)\.eq\("product_id", data\.id\)/);
+});
+
+test("public product detail shows the saved description and core product specifications", () => {
+  const detail = read("src/app/(public)/products/[slug]/page.tsx");
+  assert.match(detail, /Product code/);
+  assert.match(detail, /Material/);
+  assert.match(detail, /Description/);
+  assert.match(detail, /product\.description/);
+});
+
+test("product editor inputs expose their visible field names to assistive technology", () => {
+  const products = read("src/app/(admin)/admin/products/page.tsx");
+  assert.match(products, /aria-label=\{label\}/);
+  assert.match(products, /aria-label="Product description"/);
+  assert.match(products, /aria-label="Picture URLs"/);
+});

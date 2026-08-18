@@ -27,6 +27,9 @@ type ProductDetail = {
   dimensions: { width: string; depth: string; height: string };
   weight: string;
   colors: string[];
+  sku?: string;
+  material?: string;
+  color?: string;
 };
 
 const seedProducts: ProductDetail[] = [
@@ -168,8 +171,13 @@ export default function ProductDetailPage() {
             <div className={styles.detailPanel}>
               <span className={styles.heroKicker}>{product.category}</span>
               <h1 className={styles.detailTitle}>{product.name}</h1>
-              <p className={styles.heroCopy} style={{ margin: 0, textAlign: "left" }}>{product.shortDescription || product.description}</p>
+              <p className={styles.heroCopy} style={{ margin: 0, textAlign: "left" }}>{product.description || product.shortDescription}</p>
               <div className={styles.price}>{formatPrice(product.price)}</div>
+              <div className={styles.muted}>
+                {product.sku && <p>Product code: {product.sku}</p>}
+                {product.material && <p>Material: {product.material}</p>}
+                {product.color && <p>Color: {product.color}</p>}
+              </div>
               <p className={styles.muted}>
                 Availability: In stock or pending final team confirmation. Delivery/production timing will be confirmed after order review.
               </p>
@@ -225,6 +233,10 @@ export default function ProductDetailPage() {
 
         <section className={styles.darkBand}>
           <div className={styles.darkCards}>
+            <article className={styles.darkCard}>
+              <h2>Description</h2>
+              <p>{product.description}</p>
+            </article>
             <article className={styles.darkCard}>
               <h2>Details</h2>
               <ul>

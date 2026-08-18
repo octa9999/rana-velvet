@@ -20,7 +20,13 @@ const emptyProduct: AdminProduct = {
   sku: "",
   material: "",
   color: "",
+  description: "",
+  images: [],
 };
+
+function parseImageUrls(value: string) {
+  return Array.from(new Set(value.split(/\r?\n/).map((url) => url.trim()).filter(Boolean)));
+}
 
 export default function AdminProductsPage() {
   const [products, setProducts] = useState(adminProducts);
@@ -64,7 +70,8 @@ export default function AdminProductsPage() {
       id: editing.id || undefined,
       slug: editing.slug || editing.name.toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/(^-|-$)/g, ""),
       sku: editing.sku || `RV-${Date.now().toString().slice(-5)}`,
-      image: editing.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
+      images: editing.images?.length ? editing.images : parseImageUrls(editing.image),
+      image: editing.images?.[0] || editing.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
       reserved: editing.reserved || 0,
     };
     const response = await fetch("/api/admin/products", {
@@ -109,8 +116,9 @@ export default function AdminProductsPage() {
       setNotice(payload?.error || "Image upload failed.");
       return;
     }
-    setEditing({ ...editing, image: payload.row.url });
-    setNotice("Image uploaded and attached to this product draft.");
+    const images = Array.from(new Set([...(editing.images || []), payload.row.url]));
+    setEditing({ ...editing, image: images[0], images });
+    setNotice("Image uploaded and added to this product gallery draft.");
     event.target.value = "";
   };
 
@@ -225,23 +233,47 @@ export default function AdminProductsPage() {
               {[
                 ["name", "Product name"],
                 ["slug", "Slug"],
-                ["sku", "SKU"],
+                ["sku", "Product code"],
                 ["material", "Material"],
                 ["color", "Color"],
-                ["image", "Image URL"],
               ].map(([key, label]) => (
-                <label key={key} className={key === "image" ? "sm:col-span-2" : ""}>
+                <label key={key}>
                   <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">{label}</span>
                   <input
+                    aria-label={label}
                     value={String(editing[key as keyof AdminProduct] ?? "")}
                     onChange={(event) => setEditing({ ...editing, [key]: event.target.value })}
                     className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5 focus:ring-[#0d6b3f]/30"
                   />
                 </label>
               ))}
+              <label className="sm:col-span-2">
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Product description</span>
+                <textarea
+                  aria-label="Product description"
+                  value={editing.description}
+                  onChange={(event) => setEditing({ ...editing, description: event.target.value })}
+                  className="min-h-28 w-full rounded-2xl bg-[#f4f6f3] px-4 py-3 text-sm outline-none ring-1 ring-black/5 focus:ring-[#0d6b3f]/30"
+                  placeholder="Describe the product exactly as it should appear on the public product page."
+                />
+              </label>
+              <label className="sm:col-span-2">
+                <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Picture URLs</span>
+                <textarea
+                  aria-label="Picture URLs"
+                  value={(editing.images?.length ? editing.images : [editing.image]).filter(Boolean).join("\n")}
+                  onChange={(event) => {
+                    const images = parseImageUrls(event.target.value);
+                    setEditing({ ...editing, images, image: images[0] || "" });
+                  }}
+                  className="min-h-28 w-full rounded-2xl bg-[#f4f6f3] px-4 py-3 text-sm outline-none ring-1 ring-black/5 focus:ring-[#0d6b3f]/30"
+                  placeholder="One picture URL per line. The first picture is the primary product image."
+                />
+              </label>
               <label>
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Category</span>
                 <select
+                  aria-label="Category"
                   value={editing.category}
                   onChange={(event) => setEditing({ ...editing, category: event.target.value })}
                   className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
@@ -254,6 +286,7 @@ export default function AdminProductsPage() {
               <label>
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Status</span>
                 <select
+                  aria-label="Status"
                   value={editing.status}
                   onChange={(event) => setEditing({ ...editing, status: event.target.value as AdminProduct["status"] })}
                   className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
@@ -266,6 +299,7 @@ export default function AdminProductsPage() {
               <label>
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Price</span>
                 <input
+                  aria-label="Price"
                   type="number"
                   value={editing.price}
                   onChange={(event) => setEditing({ ...editing, price: Number(event.target.value) })}
@@ -275,6 +309,7 @@ export default function AdminProductsPage() {
               <label>
                 <span className="mb-2 block text-xs font-semibold uppercase tracking-wider text-neutral-400">Stock</span>
                 <input
+                  aria-label="Stock"
                   type="number"
                   value={editing.stock}
                   onChange={(event) => setEditing({ ...editing, stock: Number(event.target.value) })}

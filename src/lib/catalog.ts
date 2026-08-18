@@ -222,6 +222,8 @@ export async function upsertProduct(input: Partial<CatalogProduct> & { name: str
     return { data: { ...fallbackProducts[0], ...input, id: input.id || crypto.randomUUID() }, error: null };
   }
 
+  const imageUrls = Array.from(new Set((input.images?.length ? input.images : [input.image]).filter((image): image is string => Boolean(image?.trim()))));
+  const primaryImage = imageUrls[0] || input.image;
   const payload = {
     id: input.id,
     name: input.name,
@@ -238,8 +240,8 @@ export async function upsertProduct(input: Partial<CatalogProduct> & { name: str
     colors: input.colors,
     dimensions: input.dimensions,
     details: input.details,
-    image_url: input.image,
-    thumbnail_url: input.image,
+    image_url: primaryImage,
+    thumbnail_url: primaryImage,
     seo_title: (input as Record<string, unknown>).seo_title,
     seo_description: (input as Record<string, unknown>).seo_description,
     status: input.status || "active",
@@ -253,16 +255,22 @@ export async function upsertProduct(input: Partial<CatalogProduct> & { name: str
   };
 
   const { data, error } = await supabase.from("products").upsert(payload).select().single();
-  if (!error && data && input.image) {
-    await supabase.from("product_images").delete().eq("product_id", data.id).eq("is_primary", true);
-    await supabase.from("product_images").insert({
+  if (!error && data && imageUrls.length) {
+    const { error: imagesError } = await supabase.from("product_images").delete().eq("product_id", data.id);
+    if (imagesError) return { data, error: imagesError };
+
+    const { error: insertError } = await supabase.from("product_images").insert(
+      imageUrls.map((url, index) => ({
         product_id: data.id,
-        url: input.image,
-        image_url: input.image,
+        url,
+        image_url: url,
         alt_text: input.name,
-        is_primary: true,
-        sort_order: 0,
-      });
+        is_primary: index === 0,
+        sort_order: index,
+        order_index: index,
+      })),
+    );
+    if (insertError) return { data, error: insertError };
   }
   return { data, error };
 }

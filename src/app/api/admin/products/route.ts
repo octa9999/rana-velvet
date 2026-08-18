@@ -16,6 +16,7 @@ const adminProductSchema = z.object({
   status: z.enum(["active", "draft", "archived"]),
   featured: z.boolean().optional(),
   image: z.string().optional(),
+  images: z.array(z.string().url()).optional(),
   description: z.string().optional(),
   shortDescription: z.string().optional(),
   details: z.array(z.string()).optional(),
