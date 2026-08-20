@@ -169,6 +169,8 @@ test("product descriptions separate a readable summary from imported labelled sp
   const detail = read("src/app/(public)/products/[slug]/page.tsx");
 
   assert.match(detail, /function splitProductDescription/);
+  assert.match(detail, /\(\?:\\s\*:\\s\*\|\\s\+\)/);
+  assert.match(detail, /replace\(\/\\u00e2\\u0080\\u0099\/g, "'"\)/);
   assert.match(detail, /Dimensions|What\['’\]s Included|Care Instructions/);
   assert.match(detail, /descriptionContent\.summary/);
   assert.match(detail, /descriptionContent\.specifications\.map/);
