@@ -192,3 +192,10 @@ test("new categories persist with Supabase-generated IDs and appear in the produ
   assert.match(products, /cache: "no-store"/);
   assert.match(products, /category_id: selectedCategory\?\.id/);
 });
+
+test("active products remain visible even when stock is currently zero", () => {
+  const catalog = read("src/lib/catalog.ts");
+
+  assert.match(catalog, /is_active: input\.status === "active"/);
+  assert.match(catalog, /stock_status: Number\(input\.stock \?\? 0\) - Number\(input\.reserved \?\? 0\) <= 0 \? "out_of_stock" : "in_stock"/);
+});

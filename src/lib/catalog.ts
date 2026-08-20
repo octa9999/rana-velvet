@@ -245,7 +245,7 @@ export async function upsertProduct(input: Partial<CatalogProduct> & { name: str
     seo_title: (input as Record<string, unknown>).seo_title,
     seo_description: (input as Record<string, unknown>).seo_description,
     status: input.status || "active",
-    is_active: input.status !== "archived" && input.status !== "draft" && Number(input.stock ?? 0) - Number(input.reserved ?? 0) > 0,
+    is_active: input.status === "active",
     is_featured: input.featured,
     featured: input.featured,
     stock_quantity: input.stock,
