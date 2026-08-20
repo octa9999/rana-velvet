@@ -259,3 +259,13 @@ test("curtain detail cards order saved specifications and never leave empty or C
   assert.match(catalog, /const savedDetails = Array\.isArray\(row\.details\)/);
   assert.match(catalog, /isCurtain \? \[\] : fallbackDetails/);
 });
+
+test("the collection waits for the live catalog instead of flashing demo product images", () => {
+  const products = read("src/app/(public)/products/page.tsx");
+
+  assert.match(products, /const \[products, setProducts\] = useState<ProductCard\[\]>\(\[\]\)/);
+  assert.match(products, /const \[isCatalogLoading, setIsCatalogLoading\] = useState\(true\)/);
+  assert.match(products, /setIsCatalogLoading\(false\)/);
+  assert.match(products, /isCatalogLoading \? \(/);
+  assert.doesNotMatch(products, /useState<ProductCard\[\]>\(seedProducts\)/);
+});

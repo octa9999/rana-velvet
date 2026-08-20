@@ -9,7 +9,6 @@ import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
-import { readyMadeCurtains } from "@/lib/storefront";
 import { isOutOfStock } from "@/lib/product-availability";
 import styles from "@/styles/ecommerce.module.css";
 
@@ -26,18 +25,6 @@ type ProductCard = {
   reserved?: number;
   stockStatus?: "in_stock" | "out_of_stock" | "low_stock";
 };
-
-const seedProducts: ProductCard[] = [
-  ...readyMadeCurtains,
-  { id: "1", name: "Velvet Royale Bed", slug: "velvet-royale-bed", price: 89999, category: "Bedroom", description: "Luxurious velvet upholstered bed with premium frame", image: "/demohome-zenspace/bedroom.jpg" },
-  { id: "2", name: "Cloud Comfort Sofa", slug: "cloud-comfort-sofa", price: 129999, category: "Living Room", description: "3-seater plush sofa in premium velvet fabric", image: "/demohome-zenspace/living-room.jpg" },
-  { id: "3", name: "Elite Ottoman", slug: "elite-ottoman", price: 34999, category: "Seating", description: "Multi-functional ottoman with storage space", image: "/demohome-zenspace/seating.jpg" },
-  { id: "4", name: "Imperial Curtains", slug: "imperial-curtains", price: 12999, category: "Curtains", description: "Premium heavy velvet curtains with elegant drapes", image: "/demohome-zenspace/curtains.jpg" },
-  { id: "5", name: "Royal Armchair", slug: "royal-armchair", price: 54999, category: "Seating", description: "Classic armchair with refined Rana Velvet proportions", image: "/demohome-zenspace/hero-rana-chair.png" },
-  { id: "6", name: "Diamond Coffee Table", slug: "diamond-coffee-table", price: 45999, category: "Living Room", description: "Elegant coffee table for composed lounge settings", image: "/demohome-zenspace/coffee-table.jpg" },
-  { id: "7", name: "Silk Drape Collection", slug: "silk-drape-collection", price: 18999, category: "Curtains", description: "Layered drapery and fabric finishes for softened rooms", image: "/demohome-zenspace/decor.jpg" },
-  { id: "8", name: "Prestige Dining Set", slug: "prestige-dining-set", price: 189999, category: "Dining", description: "Dining pieces with tailored wood and upholstery detail", image: "/demohome-zenspace/dining.jpg" },
-];
 
 function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString("en-PK")}`;
@@ -60,17 +47,23 @@ export default function ProductsPage() {
   const [activeCategory, setActiveCategory] = useState("All");
   const [searchTerm, setSearchTerm] = useState("");
   const [sortBy, setSortBy] = useState("featured");
-  const [products, setProducts] = useState<ProductCard[]>(seedProducts);
+  const [products, setProducts] = useState<ProductCard[]>([]);
+  const [isCatalogLoading, setIsCatalogLoading] = useState(true);
+  const [catalogError, setCatalogError] = useState(false);
   const { addItem: addToCart } = useCart();
   const { addItem: addToWishlist, removeItem: removeFromWishlist, isInWishlist } = useWishlist();
 
   useEffect(() => {
     fetch("/api/catalog/products")
-      .then((response) => response.json())
-      .then((payload) => {
-        if (Array.isArray(payload.products) && payload.products.length) setProducts(payload.products);
+      .then((response) => {
+        if (!response.ok) throw new Error("Catalog request failed");
+        return response.json();
       })
-      .catch(() => setProducts(seedProducts));
+      .then((payload) => {
+        setProducts(Array.isArray(payload.products) ? payload.products : []);
+      })
+      .catch(() => setCatalogError(true))
+      .finally(() => setIsCatalogLoading(false));
   }, []);
 
   useEffect(() => {
@@ -155,7 +148,16 @@ export default function ProductsPage() {
             </div>
           </div>
 
-          {filtered.length === 0 ? (
+          {isCatalogLoading ? (
+            <div className={styles.emptyState}>
+              <p className={styles.muted}>Loading the collection...</p>
+            </div>
+          ) : catalogError ? (
+            <div className={styles.emptyState}>
+              <h2>Collection unavailable</h2>
+              <p className={styles.muted}>Please refresh the page to load the current collection.</p>
+            </div>
+          ) : filtered.length === 0 ? (
             <div className={styles.emptyState}>
               <h2>No matching products</h2>
               <p className={styles.muted}>Try another product name or reset the filters to see the full collection.</p>
