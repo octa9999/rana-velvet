@@ -38,7 +38,7 @@ type ProductDetail = {
 
 function splitProductDescription(description: string) {
   const normalized = description.replace(/\s+/g, " ").trim();
-  const markerPattern = /\b(Dimensions|What's Included|Material|Header Type|Grommet Care Instructions|Care Instructions|GSM)\s*:/gi;
+  const markerPattern = /\b(Dimensions|What['’]s Included|Material|Header Type|Grommet Care Instructions|Care Instructions|GSM)\s*:/gi;
   const markers = Array.from(normalized.matchAll(markerPattern));
 
   if (!markers.length) return { summary: normalized, specifications: [] as { label: string; value: string }[] };
@@ -47,7 +47,7 @@ function splitProductDescription(description: string) {
   const specifications = markers.map((marker, index) => {
     const end = markers[index + 1]?.index ?? normalized.length;
     return {
-      label: marker[1],
+      label: marker[1].replace("What’s", "What's"),
       value: normalized.slice((marker.index ?? 0) + marker[0].length, end).trim(),
     };
   });

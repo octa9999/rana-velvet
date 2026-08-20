@@ -169,7 +169,7 @@ test("product descriptions separate a readable summary from imported labelled sp
   const detail = read("src/app/(public)/products/[slug]/page.tsx");
 
   assert.match(detail, /function splitProductDescription/);
-  assert.match(detail, /Dimensions|What's Included|Care Instructions/);
+  assert.match(detail, /Dimensions|What\['’\]s Included|Care Instructions/);
   assert.match(detail, /descriptionContent\.summary/);
   assert.match(detail, /descriptionContent\.specifications\.map/);
   assert.match(detail, /<dl className=\{styles\.specificationList\}>/);
@@ -215,4 +215,12 @@ test("out-of-stock products stay visible but cannot be purchased", () => {
   assert.match(detail, /disabled=\{outOfStock\}/);
   assert.match(detail, /outOfStock \? "Out of Stock" : added \? "Added" : "Add to Cart"/);
   assert.match(detail, /disabled=\{outOfStock\} onClick=\{buyNow\}/);
+});
+
+test("sofa filters do not include products categorised as curtains", () => {
+  const products = read("src/app/(public)/products/page.tsx");
+
+  assert.match(products, /const primaryCategory = product\.category\.toLowerCase\(\)/);
+  assert.match(products, /if \(target === "sofas"\) return primaryCategory\.includes\("sofa"\) \|\| primaryCategory\.includes\("seating"\)/);
+  assert.match(products, /product\.category === "Curtain" \? "Curtains" : product\.category/);
 });

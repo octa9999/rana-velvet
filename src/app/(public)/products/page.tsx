@@ -46,15 +46,14 @@ function formatPrice(price: number) {
 function matchesCategory(product: ProductCard, category: string) {
   if (category === "All") return true;
 
-  const values = [product.category, product.subcategory]
-    .filter(Boolean)
-    .map((value) => value!.toLowerCase());
+  const primaryCategory = product.category.toLowerCase();
+  const subcategory = product.subcategory?.toLowerCase() || "";
   const target = category.toLowerCase();
 
-  if (target === "sofas") return values.some((value) => value.includes("sofa") || value.includes("seating"));
-  if (target === "curtains") return values.some((value) => value.includes("curtain"));
+  if (target === "sofas") return primaryCategory.includes("sofa") || primaryCategory.includes("seating");
+  if (target === "curtains") return primaryCategory.includes("curtain") || subcategory.includes("curtain");
 
-  return values.includes(target);
+  return primaryCategory === target;
 }
 
 export default function ProductsPage() {
@@ -82,7 +81,7 @@ export default function ProductsPage() {
     }
   }, []);
 
-  const categories = ["All", "Bedroom", "Sofas", "Living Room", "Curtains", ...Array.from(new Set(products.map((product) => product.category).filter(Boolean)))].filter(
+  const categories = ["All", "Bedroom", "Sofas", "Living Room", "Curtains", ...Array.from(new Set(products.map((product) => product.category === "Curtain" ? "Curtains" : product.category).filter(Boolean)))].filter(
     (category, index, list) => list.indexOf(category) === index && (category === "All" || products.some((product) => matchesCategory(product, category)))
   );
   const filtered = products
