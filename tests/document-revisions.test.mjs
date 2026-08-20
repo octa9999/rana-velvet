@@ -138,3 +138,9 @@ test("product editor inputs expose their visible field names to assistive techno
   assert.match(products, /aria-label="Product description"/);
   assert.match(products, /aria-label="Picture URLs"/);
 });
+
+test("Supabase setup provisions a public products Storage bucket for product image uploads", () => {
+  const migration = read("supabase/migrations/20260820073737_ensure_product_image_bucket.sql");
+  assert.match(migration, /insert into storage\.buckets/);
+  assert.match(migration, /\('products', 'products', true\)/);
+});
