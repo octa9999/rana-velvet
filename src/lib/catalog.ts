@@ -99,6 +99,10 @@ function productFromRow(row: ProductRow): CatalogProduct {
     asString(row.category_name) ||
     "Furniture";
   const savedColor = asString(row.color).trim() || row.name;
+  const isCurtain = categoryName.toLowerCase().includes("curtain");
+  const savedDetails = Array.isArray(row.details)
+    ? row.details.map((detail) => String(detail).trim()).filter(Boolean)
+    : [];
 
   return {
     id: String(row.id),
@@ -119,7 +123,7 @@ function productFromRow(row: ProductRow): CatalogProduct {
     description: asString(row.description),
     shortDescription: asString(row.short_description) || asString(row.description),
     images: images.length ? images : [primaryImage],
-    details: Array.isArray(row.details) ? row.details.map((detail) => String(detail)) : fallbackDetails,
+    details: savedDetails.length ? savedDetails : isCurtain ? [] : fallbackDetails,
     dimensions:
       typeof row.dimensions === "object" && row.dimensions
         ? (row.dimensions as CatalogProduct["dimensions"])

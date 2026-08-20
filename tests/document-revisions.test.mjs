@@ -173,7 +173,7 @@ test("product descriptions separate a readable summary from imported labelled sp
   assert.match(detail, /replace\(\/\\u00e2\\u0080\\u0099\/g, "'"\)/);
   assert.match(detail, /Dimensions|What\['’\]s Included|Care Instructions/);
   assert.match(detail, /descriptionContent\.summary/);
-  assert.match(detail, /descriptionContent\.specifications\.map/);
+  assert.match(detail, /orderSpecifications\(descriptionContent\.specifications\)/);
   assert.match(detail, /<dl className=\{styles\.specificationList\}>/);
   assert.match(detail, /<dt>\{specification\.label\}<\/dt>/);
   assert.match(detail, /<dd>\{specification\.value\}<\/dd>/);
@@ -240,5 +240,22 @@ test("product colour selectors discard empty values and use a visible fallback",
   assert.match(catalog, /function normalizedColors/);
   assert.match(catalog, /filter\(Boolean\)/);
   assert.match(catalog, /asString\(row\.color\)\.trim\(\) \|\| row\.name/);
-  assert.match(detail, /product\.category\.toLowerCase\(\)\.includes\("curtain"\) \? "Colour" : "Finish"/);
+  assert.match(detail, /const isCurtain = product\.category\.toLowerCase\(\)\.includes\("curtain"\)/);
+  assert.match(detail, /isCurtain \? "Colour" : "Finish"/);
+});
+
+test("curtain detail cards order saved specifications and never leave empty or Custom placeholders", () => {
+  const detail = read("src/app/(public)/products/[slug]/page.tsx");
+  const catalog = read("src/lib/catalog.ts");
+
+  assert.match(detail, /const specificationOrder = \["Dimensions", "What's Included", "Material", "GSM", "Header Type", "Care Instructions"\]/);
+  assert.match(detail, /marker\[1\] === "Grommet Care Instructions" \? "Care Instructions" : marker\[1\]/);
+  assert.match(detail, /const visibleDetails = product\.details\.filter/);
+  assert.match(detail, /Product details are available on request\./);
+  assert.match(detail, /const dimensionsSpecification = orderedSpecifications\.find/);
+  assert.match(detail, /Dimensions are available on request\./);
+  assert.match(detail, /dimensionsSpecification \? \(/);
+  assert.match(detail, /product\.category\.toLowerCase\(\)\.includes\("curtain"\)/);
+  assert.match(catalog, /const savedDetails = Array\.isArray\(row\.details\)/);
+  assert.match(catalog, /isCurtain \? \[\] : fallbackDetails/);
 });

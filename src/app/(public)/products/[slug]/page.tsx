@@ -53,12 +53,24 @@ function splitProductDescription(description: string) {
   const specifications = markers.map((marker, index) => {
     const end = markers[index + 1]?.index ?? normalized.length;
     return {
-      label: marker[1],
+      label: marker[1] === "Grommet Care Instructions" ? "Care Instructions" : marker[1],
       value: normalized.slice((marker.index ?? 0) + marker[0].length, end).trim(),
     };
   });
 
   return { summary, specifications };
+}
+
+const specificationOrder = ["Dimensions", "What's Included", "Material", "GSM", "Header Type", "Care Instructions"];
+
+function orderSpecifications(specifications: { label: string; value: string }[]) {
+  return [...specifications]
+    .filter((specification) => specification.value)
+    .sort((left, right) => {
+      const leftIndex = specificationOrder.indexOf(left.label);
+      const rightIndex = specificationOrder.indexOf(right.label);
+      return (leftIndex === -1 ? specificationOrder.length : leftIndex) - (rightIndex === -1 ? specificationOrder.length : rightIndex);
+    });
 }
 
 const seedProducts: ProductDetail[] = [
@@ -179,6 +191,21 @@ export default function ProductDetailPage() {
   };
 
   const descriptionContent = splitProductDescription(product.description || product.shortDescription);
+  const orderedSpecifications = orderSpecifications(descriptionContent.specifications);
+  const visibleDetails = product.details.filter((detail) => detail.trim());
+  const detailsToShow = visibleDetails.length
+    ? visibleDetails
+    : orderedSpecifications.length
+      ? orderedSpecifications.map((specification) => `${specification.label}: ${specification.value}`)
+      : ["Product details are available on request."];
+  const dimensionsSpecification = orderedSpecifications.find((specification) => specification.label === "Dimensions");
+  const isCurtain = product.category.toLowerCase().includes("curtain");
+  const savedDimensions = [
+    ["Width", product.dimensions.width],
+    ["Depth", product.dimensions.depth],
+    ["Height", product.dimensions.height],
+    ["Weight", product.weight],
+  ].filter(([, value]) => value.trim() && !["custom", "made to order"].includes(value.trim().toLowerCase()));
 
   return (
     <div className={styles.shell}>
@@ -212,9 +239,9 @@ export default function ProductDetailPage() {
               <span className={styles.heroKicker}>{product.category}</span>
               <h1 className={styles.detailTitle}>{product.name}</h1>
               <p className={styles.heroCopy} style={{ margin: 0, textAlign: "left" }}>{descriptionContent.summary || product.shortDescription}</p>
-              {descriptionContent.specifications.length > 0 && (
+              {orderedSpecifications.length > 0 && (
                 <dl className={styles.specificationList}>
-                  {descriptionContent.specifications.map((specification) => (
+                  {orderedSpecifications.map((specification) => (
                     <div key={specification.label}>
                       <dt>{specification.label}</dt>
                       <dd>{specification.value}</dd>
@@ -233,7 +260,7 @@ export default function ProductDetailPage() {
               </p>
 
               <div>
-                <span className={styles.heroKicker}>{product.category.toLowerCase().includes("curtain") ? "Colour" : "Finish"}</span>
+                <span className={styles.heroKicker}>{isCurtain ? "Colour" : "Finish"}</span>
                 <div className={styles.choiceRow}>
                   {product.colors.map((item, index) => (
                     <button
@@ -286,27 +313,27 @@ export default function ProductDetailPage() {
             <article className={styles.darkCard}>
               <h2>Description</h2>
               <p>{descriptionContent.summary || product.shortDescription}</p>
-              {descriptionContent.specifications.length > 0 && (
-                <ul>
-                  {descriptionContent.specifications.map((specification) => <li key={specification.label}>{specification.label}: {specification.value}</li>)}
-                </ul>
-              )}
             </article>
             <article className={styles.darkCard}>
               <h2>Details</h2>
               <ul>
-                {product.details.map((detail) => (
+                {detailsToShow.map((detail) => (
                   <li key={detail}>{detail}</li>
                 ))}
               </ul>
             </article>
             <article className={styles.darkCard}>
               <h2>Dimensions</h2>
-              <p>Width: {product.dimensions.width}</p>
-              <p>Depth: {product.dimensions.depth}</p>
-              <p>Height: {product.dimensions.height}</p>
-              <p>Weight: {product.weight}</p>
-              <p>{product.category === "Curtains" ? "Ready-made curtains use Add to Cart. Made-to-measure orders should use Customize Your Curtain." : "Large or custom furniture orders require final confirmation before production or dispatch."}</p>
+              {dimensionsSpecification ? (
+                <p>Dimensions: {dimensionsSpecification.value}</p>
+              ) : savedDimensions.length ? (
+                <>
+                  {savedDimensions.map(([label, value]) => <p key={label}>{label}: {value}</p>)}
+                </>
+              ) : (
+                <p>Dimensions are available on request.</p>
+              )}
+              <p>{isCurtain ? "Ready-made curtains use Add to Cart. Made-to-measure orders should use Customize Your Curtain." : "Large or custom furniture orders require final confirmation before production or dispatch."}</p>
             </article>
           </div>
         </section>
