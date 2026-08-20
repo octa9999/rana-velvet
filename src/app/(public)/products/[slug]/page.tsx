@@ -205,7 +205,9 @@ export default function ProductDetailPage() {
     ["Depth", product.dimensions.depth],
     ["Height", product.dimensions.height],
     ["Weight", product.weight],
-  ].filter(([, value]) => value.trim() && !["custom", "made to order"].includes(value.trim().toLowerCase()));
+  ]
+    .map(([label, value]) => [label, String(value ?? "").trim()] as const)
+    .filter(([, value]) => value && !["custom", "made to order"].includes(value.toLowerCase()));
 
   return (
     <div className={styles.shell}>

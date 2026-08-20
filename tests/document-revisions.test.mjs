@@ -269,3 +269,10 @@ test("the collection waits for the live catalog instead of flashing demo product
   assert.match(products, /isCatalogLoading \? \(/);
   assert.doesNotMatch(products, /useState<ProductCard\[\]>\(seedProducts\)/);
 });
+
+test("product pages tolerate incomplete dimension records from the live catalog", () => {
+  const detail = read("src/app/(public)/products/[slug]/page.tsx");
+
+  assert.match(detail, /const savedDimensions = \[/);
+  assert.match(detail, /String\(value \?\? ""\)\.trim\(\)/);
+});
