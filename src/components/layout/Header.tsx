@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { ArrowRight, Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -89,49 +89,16 @@ const fallbackNavItems: NavItem[] = [
   },
 ];
 
-type ApiCategory = {
-  id: string;
-  name: string;
-  slug: string;
-  children?: Array<{ id: string; name: string; slug: string }>;
-};
-
-export function Header() {
+export function Header({ variant = "default" }: { variant?: "default" | "hero" }) {
   const pathname = usePathname();
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [navItems, setNavItems] = useState(fallbackNavItems);
   const { items: cartItems } = useCart();
   const { items: wishlistItems } = useWishlist();
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
 
-  useEffect(() => {
-    if (pathname !== "/products") {
-      setNavItems(fallbackNavItems);
-      return;
-    }
-
-    fetch("/api/catalog/categories")
-      .then((response) => response.json())
-      .then((payload) => {
-        if (!Array.isArray(payload.categories) || !payload.categories.length) return;
-        const categoryItems = (payload.categories as ApiCategory[]).slice(0, 4).map((category) => ({
-          name: category.name,
-          href: `/products?category=${encodeURIComponent(category.name)}`,
-        }));
-        if (categoryItems.length) {
-          setNavItems((current) =>
-            current.map((item) =>
-              item.label === "Shop" ? { ...item, subcategories: categoryItems } : item
-            )
-          );
-        }
-      })
-      .catch(() => setNavItems(fallbackNavItems));
-  }, [pathname]);
-
   return (
-    <header className={styles.nav}>
+    <header className={`${styles.nav} ${variant === "hero" ? styles.navHero : ""}`}>
       <Link className={styles.brandMark} href="/">
         <Image className={styles.brandLogo} src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={38} height={38} priority />
         Rana Velvet
@@ -150,7 +117,7 @@ export function Header() {
         </summary>
         <div className={styles.megaPanel} style={{ opacity: 1, pointerEvents: "auto", transform: "translate(-50%, 8px)" }}>
           <div className={styles.megaLinks}>
-            {navItems.map((item) => (
+            {fallbackNavItems.map((item) => (
               <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
                 {item.label}
                 <ArrowRight size={13} />
@@ -169,7 +136,7 @@ export function Header() {
       </details>
 
       <nav className={styles.navGroups} aria-label="Primary navigation">
-        {navItems.map((item) => (
+        {fallbackNavItems.map((item) => (
           <div className={styles.navGroup} key={item.label}>
             <Link className={`${styles.navTrigger} ${pathname === item.href ? styles.navActive : ""}`} href={item.href}>
               {item.label}

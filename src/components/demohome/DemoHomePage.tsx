@@ -1,58 +1,12 @@
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
-import Image from "next/image";
-import { ArrowRight, Heart, Search, ShoppingBag } from "lucide-react";
+import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 import { HomeFooter } from "@/components/layout/HomeFooter";
+import { Header } from "@/components/layout/Header";
 import styles from "./DemoHomePage.module.css";
 
 const asset = (file: string) => `/demohome-zenspace/${file}`;
-
-const headerGroups = [
-  {
-    label: "Home",
-    href: "/",
-    note: "Rana Velvet",
-    isDirect: true,
-    items: [],
-  },
-  {
-    label: "Shop",
-    href: "/products",
-    note: "Shop the house",
-    items: ["Bedroom", "Living Room", "Sofas & Seating", "Ready-Made Curtains"],
-  },
-  {
-    label: "Customize Curtain",
-    href: "/customize-curtain",
-    note: "Made To Measure",
-    items: ["I Have Measurements", "Book A Measurement Visit", "Fabric Options", "Installation Request"],
-  },
-  {
-    label: "Custom Furniture",
-    href: "/custom-furniture",
-    note: "Made for your space",
-    items: ["Sofas", "Beds", "Tables", "Custom quotation"],
-  },
-  {
-    label: "About Us",
-    href: "/about",
-    note: "Our studio",
-    items: ["Rana Velvet story", "Materials", "Craft", "Showroom"],
-  },
-  {
-    label: "Consultation",
-    href: "/consultation",
-    note: "Plan your space",
-    items: ["Book a consultation", "Room planning", "Material direction", "Design support"],
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-    note: "Talk with us",
-    items: ["Send an inquiry", "Order help", "Delivery questions", "Interior designer partners"],
-  },
-];
 
 const products = [
   {
@@ -118,63 +72,7 @@ export function DemoHomePage() {
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
-        <nav className={styles.topNav} aria-label="Demo navigation">
-          <Link className={styles.brandMark} href="/">
-            <Image className={styles.brandLogo} src="/rana-velvet-logo.png" alt="Rana Velvet logo" width={38} height={38} priority />
-            Rana Velvet
-          </Link>
-          <details className={styles.mobileMenu}>
-            <summary>
-              Menu
-              <ArrowRight size={14} />
-            </summary>
-            <div className={styles.mobileMenuPanel}>
-              {headerGroups.map((group) => (
-                <Link key={group.label} href={group.href}>
-                  <span>{group.label}</span>
-                  <small>{group.note}</small>
-                </Link>
-              ))}
-              <Link href="/wishlist">
-                <span>Wishlist</span>
-                <small>Saved pieces</small>
-              </Link>
-              <Link href="/cart">
-                <span>Cart</span>
-                <small>Order review</small>
-              </Link>
-            </div>
-          </details>
-          <div className={styles.navGroups}>
-            {headerGroups.map((group) => (
-              <div className={styles.navGroup} key={group.label}>
-                <Link className={styles.navTrigger} href={group.href}>
-                  {group.label}
-                  {!group.isDirect && <ArrowRight size={13} />}
-                </Link>
-                {!group.isDirect && <div className={styles.megaPanel}>
-                  <div>
-                    <span>{group.note}</span>
-                    <strong>{group.label}</strong>
-                  </div>
-                  <div className={styles.megaLinks}>
-                    {group.items.map((item) => (
-                      <Link key={item} href={group.href}>
-                        {item}
-                        <ArrowRight size={13} />
-                      </Link>
-                    ))}
-                  </div>
-                </div>}
-              </div>
-            ))}
-          </div>
-          <div className={styles.navTools}>
-            <Link href="/products" aria-label="Search products"><Search size={15} /></Link>
-            <Link href="/wishlist">Wishlist</Link>
-            <Link href="/cart">Cart</Link>
-          </div>
-        </nav>
+        <Header variant="hero" />
 
         <div className={styles.heroStage}>
           <img

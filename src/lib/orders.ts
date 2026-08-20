@@ -191,6 +191,27 @@ export async function createOrder(input: CheckoutOrderInput) {
   const supabase = createAdminSupabase();
   if (!supabase) return fallbackOrder(parsed);
 
+  const reservationQuantities = new Map<string, number>();
+  parsed.items.forEach((item) => {
+    reservationQuantities.set(item.productId, (reservationQuantities.get(item.productId) || 0) + item.quantity);
+  });
+  const productIds = Array.from(reservationQuantities.keys());
+  const { data: reservationProducts, error: reservationLookupError } = await supabase
+    .from("products")
+    .select("id, stock, stock_quantity, reserved_stock")
+    .in("id", productIds);
+  if (reservationLookupError || reservationProducts?.length !== productIds.length) {
+    throw new Error(reservationLookupError?.message || "One or more products are unavailable");
+  }
+
+  reservationProducts.forEach((product) => {
+    const stock = Number(product.stock_quantity ?? product.stock ?? 0);
+    const available = Math.max(0, stock - Number(product.reserved_stock || 0));
+    if ((reservationQuantities.get(product.id) || 0) > available) {
+      throw new Error("Requested quantity is no longer available");
+    }
+  });
+
   const order_number = nextOrderNumber();
   const { data: order, error } = await supabase
     .from("orders")
@@ -242,7 +263,22 @@ export async function createOrder(input: CheckoutOrderInput) {
     reference_id: order.id,
     note: `Reserved by ${order_number}`,
   }));
-  await supabase.from("inventory_movements").insert(movements);
+  const { error: movementError } = await supabase.from("inventory_movements").insert(movements);
+  if (movementError) throw new Error(movementError.message);
+
+  for (const product of reservationProducts) {
+    const quantity = reservationQuantities.get(product.id) || 0;
+    const stock = Number(product.stock_quantity ?? product.stock ?? 0);
+    const nextReserved = Math.max(0, Number(product.reserved_stock || 0) + quantity);
+    const { error: productError } = await supabase
+      .from("products")
+      .update({
+        reserved_stock: nextReserved,
+        stock_status: stock - nextReserved <= 0 ? "out_of_stock" : "in_stock",
+      })
+      .eq("id", product.id);
+    if (productError) throw new Error(productError.message);
+  }
 
   return orderFromRows(order, items || []);
 }

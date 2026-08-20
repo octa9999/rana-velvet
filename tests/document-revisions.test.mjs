@@ -32,7 +32,7 @@ test("the supplied Rana Velvet logo is used in the header and as the app icon", 
   const header = read("src/components/layout/Header.tsx");
   const demoHome = read("src/components/demohome/DemoHomePage.tsx");
   assert.match(header, /rana-velvet-logo\.png/);
-  assert.match(demoHome, /rana-velvet-logo\.png/);
+  assert.match(demoHome, /<Header variant="hero" \/>/);
   assert.ok(existsSync(new URL("../src/app/icon.png", import.meta.url)));
 });
 
@@ -143,4 +143,24 @@ test("Supabase setup provisions a public products Storage bucket for product ima
   const migration = read("supabase/migrations/20260820073737_ensure_product_image_bucket.sql");
   assert.match(migration, /insert into storage\.buckets/);
   assert.match(migration, /\('products', 'products', true\)/);
+});
+
+test("all storefront pages use the shared header, including the home hero", () => {
+  const home = read("src/components/demohome/DemoHomePage.tsx");
+  const header = read("src/components/layout/Header.tsx");
+
+  assert.match(home, /import \{ Header \} from "@\/components\/layout\/Header"/);
+  assert.match(home, /<Header variant="hero" \/>/);
+  assert.match(header, /Ready-Made Curtains/);
+  assert.doesNotMatch(header, /api\/catalog\/categories/);
+});
+
+test("checkout reservations update product availability and the migration clears stale reserved stock", () => {
+  const orders = read("src/lib/orders.ts");
+  const migration = read("supabase/migrations/20260820075802_reconcile_product_reservations.sql");
+
+  assert.match(orders, /const reservationQuantities = new Map<string, number>\(\)/);
+  assert.match(orders, /const nextReserved = Math\.max\(0, Number\(product\.reserved_stock \|\| 0\) \+ quantity\)/);
+  assert.match(migration, /inventory_movements/);
+  assert.match(migration, /reserved_stock = coalesce\(totals\.reserved_stock, 0\)/);
 });
