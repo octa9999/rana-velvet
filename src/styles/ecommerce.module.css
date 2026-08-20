@@ -67,6 +67,14 @@
   color: var(--ink) !important;
 }
 
+.navHero .megaPanel {
+  color: var(--ink);
+}
+
+.navHero .megaLinks a {
+  color: var(--ink);
+}
+
 .brandMark,
 .navTrigger,
 .navTool,

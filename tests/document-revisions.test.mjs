@@ -164,3 +164,19 @@ test("checkout reservations update product availability and the migration clears
   assert.match(migration, /inventory_movements/);
   assert.match(migration, /reserved_stock = coalesce\(totals\.reserved_stock, 0\)/);
 });
+
+test("product descriptions separate a readable summary from imported labelled specifications", () => {
+  const detail = read("src/app/(public)/products/[slug]/page.tsx");
+
+  assert.match(detail, /function splitProductDescription/);
+  assert.match(detail, /Dimensions|What's Included|Care Instructions/);
+  assert.match(detail, /descriptionContent\.summary/);
+  assert.match(detail, /descriptionContent\.specifications\.map/);
+});
+
+test("hero dropdowns keep their panel and link text readable against the glass navigation", () => {
+  const styles = read("src/styles/ecommerce.module.css");
+
+  assert.match(styles, /\.navHero \.megaPanel\s*\{[\s\S]*?color:\s*var\(--ink\)/);
+  assert.match(styles, /\.navHero \.megaLinks a\s*\{[\s\S]*?color:\s*var\(--ink\)/);
+});

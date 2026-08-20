@@ -32,6 +32,22 @@ type ProductDetail = {
   color?: string;
 };
 
+function splitProductDescription(description: string) {
+  const normalized = description.replace(/\s+/g, " ").trim();
+  const markerPattern = /\b(Dimensions|What's Included|Material|Header Type|Grommet Care Instructions|Care Instructions|GSM)\s*:/gi;
+  const markers = Array.from(normalized.matchAll(markerPattern));
+
+  if (!markers.length) return { summary: normalized, specifications: [] as string[] };
+
+  const summary = normalized.slice(0, markers[0].index).trim();
+  const specifications = markers.map((marker, index) => {
+    const end = markers[index + 1]?.index ?? normalized.length;
+    return `${marker[1]}: ${normalized.slice((marker.index ?? 0) + marker[0].length, end).trim()}`;
+  });
+
+  return { summary, specifications };
+}
+
 const seedProducts: ProductDetail[] = [
   ...readyMadeCurtains.map((product) => ({
     ...product,
@@ -140,6 +156,8 @@ export default function ProductDetailPage() {
     window.setTimeout(() => setAdded(false), 1600);
   };
 
+  const descriptionContent = splitProductDescription(product.description || product.shortDescription);
+
   return (
     <div className={styles.shell}>
       <Header />
@@ -171,7 +189,7 @@ export default function ProductDetailPage() {
             <div className={styles.detailPanel}>
               <span className={styles.heroKicker}>{product.category}</span>
               <h1 className={styles.detailTitle}>{product.name}</h1>
-              <p className={styles.heroCopy} style={{ margin: 0, textAlign: "left" }}>{product.description || product.shortDescription}</p>
+              <p className={styles.heroCopy} style={{ margin: 0, textAlign: "left" }}>{descriptionContent.summary || product.shortDescription}</p>
               <div className={styles.price}>{formatPrice(product.price)}</div>
               <div className={styles.muted}>
                 {product.sku && <p>Product code: {product.sku}</p>}
@@ -235,7 +253,12 @@ export default function ProductDetailPage() {
           <div className={styles.darkCards}>
             <article className={styles.darkCard}>
               <h2>Description</h2>
-              <p>{product.description}</p>
+              <p>{descriptionContent.summary || product.shortDescription}</p>
+              {descriptionContent.specifications.length > 0 && (
+                <ul>
+                  {descriptionContent.specifications.map((specification) => <li key={specification}>{specification}</li>)}
+                </ul>
+              )}
             </article>
             <article className={styles.darkCard}>
               <h2>Details</h2>
