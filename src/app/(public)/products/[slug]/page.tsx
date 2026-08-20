@@ -233,7 +233,7 @@ export default function ProductDetailPage() {
               </p>
 
               <div>
-                <span className={styles.heroKicker}>{product.category === "Curtains" ? "Colour" : "Finish"}</span>
+                <span className={styles.heroKicker}>{product.category.toLowerCase().includes("curtain") ? "Colour" : "Finish"}</span>
                 <div className={styles.choiceRow}>
                   {product.colors.map((item, index) => (
                     <button

@@ -232,3 +232,13 @@ test("admin inventory never renders a negative available quantity", () => {
 
   assert.match(products, /Math\.max\(0, product\.stock - product\.reserved\)\} available/);
 });
+
+test("product colour selectors discard empty values and use a visible fallback", () => {
+  const catalog = read("src/lib/catalog.ts");
+  const detail = read("src/app/(public)/products/[slug]/page.tsx");
+
+  assert.match(catalog, /function normalizedColors/);
+  assert.match(catalog, /filter\(Boolean\)/);
+  assert.match(catalog, /asString\(row\.color\)\.trim\(\) \|\| row\.name/);
+  assert.match(detail, /product\.category\.toLowerCase\(\)\.includes\("curtain"\) \? "Colour" : "Finish"/);
+});

@@ -78,6 +78,14 @@ function asNumber(value: unknown, fallback = 0) {
   return typeof value === "number" ? value : Number(value ?? fallback);
 }
 
+function normalizedColors(value: unknown, fallback: string) {
+  const colors = (Array.isArray(value) ? value : [])
+    .map((color) => asString(color).trim())
+    .filter(Boolean);
+
+  return Array.from(new Set(colors.length ? colors : [fallback.trim() || "Custom"]));
+}
+
 function productFromRow(row: ProductRow): CatalogProduct {
   const imageRows = Array.isArray(row.product_images) ? row.product_images : [];
   const images = imageRows
@@ -90,6 +98,7 @@ function productFromRow(row: ProductRow): CatalogProduct {
     row.category?.name ||
     asString(row.category_name) ||
     "Furniture";
+  const savedColor = asString(row.color).trim() || row.name;
 
   return {
     id: String(row.id),
@@ -106,7 +115,7 @@ function productFromRow(row: ProductRow): CatalogProduct {
     image: primaryImage,
     sku: asString(row.sku),
     material: asString(row.material),
-    color: asString(row.color),
+    color: savedColor,
     description: asString(row.description),
     shortDescription: asString(row.short_description) || asString(row.description),
     images: images.length ? images : [primaryImage],
@@ -116,7 +125,7 @@ function productFromRow(row: ProductRow): CatalogProduct {
         ? (row.dimensions as CatalogProduct["dimensions"])
         : { width: asString(row.width, "Custom"), depth: asString(row.depth, "Custom"), height: asString(row.height, "Custom") },
     weight: asString(row.weight, "Made to order"),
-    colors: Array.isArray(row.colors) && row.colors.length ? row.colors.map((color) => String(color)) : [asString(row.color, "Custom")],
+    colors: normalizedColors(row.colors, savedColor),
     rating: asNumber(row.rating, 4.8),
     reviews: asNumber(row.reviews),
   };
@@ -227,6 +236,7 @@ export async function upsertProduct(input: Partial<CatalogProduct> & { name: str
 
   const imageUrls = Array.from(new Set((input.images?.length ? input.images : [input.image]).filter((image): image is string => Boolean(image?.trim()))));
   const primaryImage = imageUrls[0] || input.image;
+  const colors = normalizedColors(input.colors, input.color?.trim() || input.name);
   const payload = {
     id: input.id,
     name: input.name,
@@ -239,8 +249,8 @@ export async function upsertProduct(input: Partial<CatalogProduct> & { name: str
     subcategory: input.subcategory,
     sku: input.sku,
     material: input.material,
-    color: input.color,
-    colors: input.colors,
+    color: input.color?.trim() || colors[0],
+    colors,
     dimensions: input.dimensions,
     details: input.details,
     image_url: primaryImage,
