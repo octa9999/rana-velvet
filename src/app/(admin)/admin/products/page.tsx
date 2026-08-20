@@ -213,7 +213,7 @@ export default function AdminProductsPage() {
               </div>
               <p className="text-sm font-semibold">{formatAdminPrice(product.price)}</p>
               <div>
-                <p className="text-sm font-semibold">{product.stock - product.reserved} available</p>
+                <p className="text-sm font-semibold">{Math.max(0, product.stock - product.reserved)} available</p>
                 <p className="text-xs text-neutral-500">{product.reserved} reserved</p>
               </div>
               <span className={`w-fit rounded-full px-3 py-1 text-xs font-semibold ${product.status === "active" ? "bg-[#e5f4ec] text-[#0d6b3f]" : "bg-neutral-100 text-neutral-500"}`}>

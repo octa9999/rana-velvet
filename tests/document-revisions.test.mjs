@@ -224,3 +224,9 @@ test("sofa filters do not include products categorised as curtains", () => {
   assert.match(products, /if \(target === "sofas"\) return primaryCategory\.includes\("sofa"\) \|\| primaryCategory\.includes\("seating"\)/);
   assert.match(products, /product\.category === "Curtain" \? "Curtains" : product\.category/);
 });
+
+test("admin inventory never renders a negative available quantity", () => {
+  const products = read("src/app/(admin)/admin/products/page.tsx");
+
+  assert.match(products, /Math\.max\(0, product\.stock - product\.reserved\)\} available/);
+});
