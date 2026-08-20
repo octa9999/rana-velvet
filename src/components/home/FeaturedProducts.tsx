@@ -5,6 +5,7 @@ import Link from "next/link";
 import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 import { useWishlist } from "@/context/WishlistContext";
 import { useCart } from "@/context/CartContext";
+import { isOutOfStock } from "@/lib/product-availability";
 
 type FeaturedProduct = {
   id: string;
@@ -15,6 +16,9 @@ type FeaturedProduct = {
   category: string;
   href?: string;
   image: string;
+  stock?: number;
+  reserved?: number;
+  stockStatus?: "in_stock" | "out_of_stock" | "low_stock";
 };
 
 const seedProducts: FeaturedProduct[] = [
@@ -174,6 +178,9 @@ export function FeaturedProducts() {
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6 lg:gap-8">
           {products.map((product, index) => (
             <AnimatedItem key={product.id} delay={index * 100}>
+              {(() => {
+                const outOfStock = isOutOfStock(product);
+                return <>
               <Link href={product.href || `/products/${product.slug}`} className="group block">
                 <div className="relative overflow-hidden bg-[var(--charcoal)] rounded-xl sm:rounded-2xl border border-white/[0.03] hover:border-[var(--gold)]/30 transition-all duration-500">
                   <div className="aspect-[3/4] relative">
@@ -192,6 +199,7 @@ export function FeaturedProducts() {
                       <span className="px-3 py-1.5 sm:px-5 sm:py-2.5 bg-[var(--gold)] rounded-full font-[family-name:var(--font-sans)] text-[10px] sm:text-xs uppercase tracking-wider text-[var(--charcoal)] font-medium">
                         {product.category}
                       </span>
+                      {outOfStock && <span className="mt-2 block px-3 py-1.5 bg-white text-[var(--charcoal)] rounded-full font-[family-name:var(--font-sans)] text-[10px] sm:text-xs uppercase tracking-wider font-medium">Out of stock</span>}
                     </div>
 
                     {/* Shimmer Sweep Overlay */}
@@ -217,8 +225,11 @@ export function FeaturedProducts() {
                       <button
                         onClick={(e) => {
                           e.preventDefault();
+                          if (outOfStock) return;
                           addToCart({ id: product.id, name: product.name, slug: product.slug, price: product.price, category: product.category, image: product.image, quantity: 1, color: product.category });
                         }}
+                        disabled={outOfStock}
+                        aria-label={outOfStock ? `${product.name} is out of stock` : `Add ${product.name} to cart`}
                         className="w-10 h-10 sm:w-12 sm:h-12 bg-[var(--gold)] rounded-full flex items-center justify-center hover:bg-white transition-all shadow-lg"
                       >
                         <ShoppingBag className="w-4 h-4 sm:w-5 sm:h-5 text-[var(--charcoal)]" />
@@ -237,6 +248,8 @@ export function FeaturedProducts() {
                   </div>
                 </div>
               </Link>
+                </>;
+              })()}
             </AnimatedItem>
           ))}
         </div>

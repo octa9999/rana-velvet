@@ -4,13 +4,14 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { useParams } from "next/navigation";
+import { useParams, useRouter } from "next/navigation";
 import { ArrowLeft, ArrowRight, Check, Heart, Minus, Plus, ShoppingBag } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { readyMadeCurtains, whatsappHref } from "@/lib/storefront";
+import { isOutOfStock } from "@/lib/product-availability";
 import styles from "@/styles/ecommerce.module.css";
 
 type ProductDetail = {
@@ -30,6 +31,9 @@ type ProductDetail = {
   sku?: string;
   material?: string;
   color?: string;
+  stock?: number;
+  reserved?: number;
+  stockStatus?: "in_stock" | "out_of_stock" | "low_stock";
 };
 
 function splitProductDescription(description: string) {
@@ -121,6 +125,7 @@ function formatPrice(price: number) {
 
 export default function ProductDetailPage() {
   const params = useParams();
+  const router = useRouter();
   const slug = params.slug as string;
   const [product, setProduct] = useState<ProductDetail>(fallbackProduct(slug));
   const [selectedImage, setSelectedImage] = useState(0);
@@ -140,8 +145,10 @@ export default function ProductDetailPage() {
   }, [slug]);
 
   const color = product.colors[selectedColor] || product.colors[0] || product.category;
+  const outOfStock = isOutOfStock(product);
 
   const addCurrentToCart = () => {
+    if (outOfStock) return;
     addToCart({
       id: product.id,
       name: product.name,
@@ -154,6 +161,12 @@ export default function ProductDetailPage() {
     });
     setAdded(true);
     window.setTimeout(() => setAdded(false), 1600);
+  };
+
+  const buyNow = () => {
+    if (outOfStock) return;
+    addCurrentToCart();
+    router.push("/checkout");
   };
 
   const descriptionContent = splitProductDescription(product.description || product.shortDescription);
@@ -196,8 +209,8 @@ export default function ProductDetailPage() {
                 {product.material && <p>Material: {product.material}</p>}
                 {product.color && <p>Color: {product.color}</p>}
               </div>
-              <p className={styles.muted}>
-                Availability: In stock or pending final team confirmation. Delivery/production timing will be confirmed after order review.
+              <p className={outOfStock ? styles.stockMessage : styles.muted}>
+                {outOfStock ? "Availability: Out of stock." : "Availability: In stock or pending final team confirmation. Delivery/production timing will be confirmed after order review."}
               </p>
 
               <div>
@@ -217,15 +230,15 @@ export default function ProductDetailPage() {
               </div>
 
               <div className={styles.quantity}>
-                <button onClick={() => setQuantity((current) => Math.max(1, current - 1))} type="button" aria-label="Decrease quantity"><Minus size={14} /></button>
+                <button disabled={outOfStock} onClick={() => setQuantity((current) => Math.max(1, current - 1))} type="button" aria-label="Decrease quantity"><Minus size={14} /></button>
                 <span>{quantity}</span>
-                <button onClick={() => setQuantity((current) => current + 1)} type="button" aria-label="Increase quantity"><Plus size={14} /></button>
+                <button disabled={outOfStock} onClick={() => setQuantity((current) => current + 1)} type="button" aria-label="Increase quantity"><Plus size={14} /></button>
               </div>
 
               <div className={styles.choiceRow}>
-                <button className={styles.primaryPill} onClick={addCurrentToCart} type="button">
+                <button className={styles.primaryPill} disabled={outOfStock} onClick={addCurrentToCart} type="button">
                   {added ? <Check size={16} /> : <ShoppingBag size={16} />}
-                  {added ? "Added" : "Add to Cart"}
+                  {outOfStock ? "Out of Stock" : added ? "Added" : "Add to Cart"}
                 </button>
                 <button
                   className={styles.secondaryPill}
@@ -238,9 +251,9 @@ export default function ProductDetailPage() {
                   <Heart size={16} fill={isInWishlist(product.id) ? "currentColor" : "none"} />
                   Wishlist
                 </button>
-                <Link className={styles.secondaryPill} href="/checkout">
+                <button className={styles.secondaryPill} disabled={outOfStock} onClick={buyNow} type="button">
                   Buy Now <ArrowRight size={15} />
-                </Link>
+                </button>
                 <Link className={styles.whatsappButton} href={whatsappHref(`Hi Rana Velvet, I want to ask about ${product.name}.`)}>
                   Ask on WhatsApp
                 </Link>

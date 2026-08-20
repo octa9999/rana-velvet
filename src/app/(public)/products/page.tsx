@@ -10,6 +10,7 @@ import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
 import { readyMadeCurtains } from "@/lib/storefront";
+import { isOutOfStock } from "@/lib/product-availability";
 import styles from "@/styles/ecommerce.module.css";
 
 type ProductCard = {
@@ -21,6 +22,9 @@ type ProductCard = {
   subcategory?: string;
   description: string;
   image: string;
+  stock?: number;
+  reserved?: number;
+  stockStatus?: "in_stock" | "out_of_stock" | "low_stock";
 };
 
 const seedProducts: ProductCard[] = [
@@ -171,8 +175,12 @@ export default function ProductsPage() {
             <div className={styles.productGrid}>
               {filtered.map((product) => (
               <article className={styles.productCard} key={product.id}>
+                {(() => {
+                  const outOfStock = isOutOfStock(product);
+                  return <>
                 <Link className={styles.productMedia} href={`/products/${product.slug}`}>
                   <img src={product.image} alt={product.name} />
+                  {outOfStock && <span className={styles.stockBadge}>Out of stock</span>}
                   <div className={styles.productActions}>
                     <button
                       className={styles.iconPill}
@@ -190,8 +198,10 @@ export default function ProductsPage() {
                       className={styles.iconPill}
                       type="button"
                       aria-label={`Add ${product.name} to cart`}
+                      disabled={outOfStock}
                       onClick={(event) => {
                         event.preventDefault();
+                        if (outOfStock) return;
                         addToCart({ ...product, quantity: 1, color: product.category });
                       }}
                     >
@@ -200,13 +210,15 @@ export default function ProductsPage() {
                   </div>
                   <div className={styles.productOverlay}>
                     <span>{formatPrice(product.price)}</span>
-                    <small>{product.category === "Curtains" ? "Choose colour" : "View Details"}</small>
+                    <small>{outOfStock ? "Out of stock" : product.category === "Curtains" ? "Choose colour" : "View details"}</small>
                   </div>
                 </Link>
                 <div className={styles.productInfo}>
                   <span>{product.category}</span>
                   <strong>{product.name}</strong>
                 </div>
+                  </>;
+                })()}
               </article>
               ))}
             </div>

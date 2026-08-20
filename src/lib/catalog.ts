@@ -9,6 +9,7 @@ export type CatalogProduct = AdminProduct & {
   dimensions: { width: string; depth: string; height: string };
   weight: string;
   colors: string[];
+  stockStatus: "in_stock" | "out_of_stock" | "low_stock";
   rating: number;
   reviews: number;
 };
@@ -58,6 +59,7 @@ export const fallbackProducts: CatalogProduct[] = adminProducts.map((product) =>
   dimensions: { width: "Custom", depth: "Custom", height: "Custom" },
   weight: "Made to order",
   colors: [product.color, "Ivory", "Charcoal", "Champagne"],
+  stockStatus: product.stock - product.reserved <= 0 ? "out_of_stock" : "in_stock",
   rating: 4.8,
   reviews: 0,
 }));
@@ -98,6 +100,7 @@ function productFromRow(row: ProductRow): CatalogProduct {
     price: asNumber(row.price),
     stock: asNumber(row.stock ?? row.stock_quantity),
     reserved: asNumber(row.reserved_stock),
+    stockStatus: asString(row.stock_status, asNumber(row.stock ?? row.stock_quantity) - asNumber(row.reserved_stock) <= 0 ? "out_of_stock" : "in_stock") as CatalogProduct["stockStatus"],
     status: asString(row.status, row.is_active ? "active" : "draft") as AdminProduct["status"],
     featured: Boolean(row.featured || row.is_featured),
     image: primaryImage,

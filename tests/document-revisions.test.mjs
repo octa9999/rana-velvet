@@ -199,3 +199,17 @@ test("active products remain visible even when stock is currently zero", () => {
   assert.match(catalog, /is_active: input\.status === "active"/);
   assert.match(catalog, /stock_status: Number\(input\.stock \?\? 0\) - Number\(input\.reserved \?\? 0\) <= 0 \? "out_of_stock" : "in_stock"/);
 });
+
+test("out-of-stock products stay visible but cannot be purchased", () => {
+  const products = read("src/app/(public)/products/page.tsx");
+  const detail = read("src/app/(public)/products/[slug]/page.tsx");
+  const availability = read("src/lib/product-availability.ts");
+
+  assert.match(availability, /export function isOutOfStock/);
+  assert.match(products, /Out of stock/);
+  assert.match(products, /disabled=\{outOfStock\}/);
+  assert.match(detail, /const outOfStock = isOutOfStock\(product\)/);
+  assert.match(detail, /disabled=\{outOfStock\}/);
+  assert.match(detail, /outOfStock \? "Out of Stock" : added \? "Added" : "Add to Cart"/);
+  assert.match(detail, /disabled=\{outOfStock\} onClick=\{buyNow\}/);
+});
