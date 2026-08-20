@@ -172,6 +172,9 @@ test("product descriptions separate a readable summary from imported labelled sp
   assert.match(detail, /Dimensions|What's Included|Care Instructions/);
   assert.match(detail, /descriptionContent\.summary/);
   assert.match(detail, /descriptionContent\.specifications\.map/);
+  assert.match(detail, /<dl className=\{styles\.specificationList\}>/);
+  assert.match(detail, /<dt>\{specification\.label\}<\/dt>/);
+  assert.match(detail, /<dd>\{specification\.value\}<\/dd>/);
 });
 
 test("hero dropdowns keep their panel and link text readable against the glass navigation", () => {

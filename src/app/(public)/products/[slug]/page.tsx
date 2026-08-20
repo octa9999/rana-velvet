@@ -41,12 +41,15 @@ function splitProductDescription(description: string) {
   const markerPattern = /\b(Dimensions|What's Included|Material|Header Type|Grommet Care Instructions|Care Instructions|GSM)\s*:/gi;
   const markers = Array.from(normalized.matchAll(markerPattern));
 
-  if (!markers.length) return { summary: normalized, specifications: [] as string[] };
+  if (!markers.length) return { summary: normalized, specifications: [] as { label: string; value: string }[] };
 
   const summary = normalized.slice(0, markers[0].index).trim();
   const specifications = markers.map((marker, index) => {
     const end = markers[index + 1]?.index ?? normalized.length;
-    return `${marker[1]}: ${normalized.slice((marker.index ?? 0) + marker[0].length, end).trim()}`;
+    return {
+      label: marker[1],
+      value: normalized.slice((marker.index ?? 0) + marker[0].length, end).trim(),
+    };
   });
 
   return { summary, specifications };
@@ -203,6 +206,16 @@ export default function ProductDetailPage() {
               <span className={styles.heroKicker}>{product.category}</span>
               <h1 className={styles.detailTitle}>{product.name}</h1>
               <p className={styles.heroCopy} style={{ margin: 0, textAlign: "left" }}>{descriptionContent.summary || product.shortDescription}</p>
+              {descriptionContent.specifications.length > 0 && (
+                <dl className={styles.specificationList}>
+                  {descriptionContent.specifications.map((specification) => (
+                    <div key={specification.label}>
+                      <dt>{specification.label}</dt>
+                      <dd>{specification.value}</dd>
+                    </div>
+                  ))}
+                </dl>
+              )}
               <div className={styles.price}>{formatPrice(product.price)}</div>
               <div className={styles.muted}>
                 {product.sku && <p>Product code: {product.sku}</p>}
@@ -269,7 +282,7 @@ export default function ProductDetailPage() {
               <p>{descriptionContent.summary || product.shortDescription}</p>
               {descriptionContent.specifications.length > 0 && (
                 <ul>
-                  {descriptionContent.specifications.map((specification) => <li key={specification}>{specification}</li>)}
+                  {descriptionContent.specifications.map((specification) => <li key={specification.label}>{specification.label}: {specification.value}</li>)}
                 </ul>
               )}
             </article>
