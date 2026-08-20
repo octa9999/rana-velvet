@@ -32,20 +32,23 @@ export default function AdminCategoriesPage() {
   const [editing, setEditing] = useState<EditableCategory | null>(null);
   const [notice, setNotice] = useState("");
 
-  useEffect(() => {
-    fetch("/api/admin/categories")
+  const loadCategories = () =>
+    fetch("/api/admin/categories", { cache: "no-store" })
       .then((response) => response.json())
       .then((payload) => {
-        if (Array.isArray(payload.categories) && payload.categories.length) setCategories(payload.categories);
+        if (Array.isArray(payload.categories)) setCategories(payload.categories);
       })
       .catch(() => setNotice("Could not load Supabase categories. Check admin login and database access."));
+
+  useEffect(() => {
+    void loadCategories();
   }, []);
 
   const saveCategory = async () => {
     if (!editing) return;
-    const normalized: EditableCategory = {
+    const normalized = {
       ...editing,
-      id: editing.id || `cat-${Date.now()}`,
+      id: editing.id || undefined,
       slug: editing.slug || slugify(editing.name),
       image: editing.image || emptyCategory.image,
       children: editing.children || [],
@@ -68,26 +71,11 @@ export default function AdminCategoriesPage() {
     if (!response.ok) {
       const payload = await response.json().catch(() => null);
       setNotice(payload?.error || "Category saved locally, but Supabase rejected the write.");
-    } else {
-      setNotice("Category saved.");
+      return;
     }
 
-    setCategories((current) => {
-      if (normalized.parent_id) {
-        return current.map((category) => {
-          if (category.id !== normalized.parent_id) return category;
-          const child = { id: normalized.id, name: normalized.name, slug: normalized.slug, count: normalized.count };
-          const exists = category.children.some((item) => item.id === normalized.id);
-          return {
-            ...category,
-            children: exists ? category.children.map((item) => (item.id === normalized.id ? child : item)) : [...category.children, child],
-          };
-        });
-      }
-
-      const exists = current.some((category) => category.id === normalized.id);
-      return exists ? current.map((category) => (category.id === normalized.id ? normalized : category)) : [normalized, ...current];
-    });
+    await loadCategories();
+    setNotice("Category saved to Supabase.");
     setEditing(null);
   };
 

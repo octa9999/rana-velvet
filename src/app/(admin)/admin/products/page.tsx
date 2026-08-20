@@ -45,15 +45,27 @@ export default function AdminProductsPage() {
       })
       .catch(() => setNotice("Could not load Supabase products. Check admin login and database access."));
 
-  useEffect(() => {
-    loadProducts();
-    fetch("/api/admin/categories")
+  const loadCategories = () =>
+    fetch("/api/admin/categories", { cache: "no-store" })
       .then((response) => response.json())
       .then((payload) => {
-        if (Array.isArray(payload.categories) && payload.categories.length) setCategories(payload.categories);
+        if (Array.isArray(payload.categories)) setCategories(payload.categories);
       })
-      .catch(() => null);
+      .catch(() => setNotice("Could not load Supabase categories. Check admin login and database access."));
+
+  useEffect(() => {
+    loadProducts();
+    void loadCategories();
   }, []);
+
+  const categoryOptions = useMemo(
+    () =>
+      categories.flatMap((category) => [
+        { id: category.id, name: category.name },
+        ...category.children.map((child) => ({ id: child.id, name: child.name })),
+      ]),
+    [categories],
+  );
 
   const filteredProducts = useMemo(() => {
     return products.filter((product) => {
@@ -65,6 +77,7 @@ export default function AdminProductsPage() {
 
   const saveProduct = async () => {
     if (!editing) return;
+    const selectedCategory = categoryOptions.find((category) => category.name === editing.category);
     const normalized = {
       ...editing,
       id: editing.id || undefined,
@@ -73,6 +86,7 @@ export default function AdminProductsPage() {
       images: editing.images?.length ? editing.images : parseImageUrls(editing.image),
       image: editing.images?.[0] || editing.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
       reserved: editing.reserved || 0,
+      category_id: selectedCategory?.id,
     };
     const response = await fetch("/api/admin/products", {
       method: "POST",
@@ -134,7 +148,10 @@ export default function AdminProductsPage() {
           {notice && <p className="mt-2 text-xs font-semibold text-[#0d6b3f]">{notice}</p>}
         </div>
         <button
-          onClick={() => setEditing(emptyProduct)}
+          onClick={() => {
+            void loadCategories();
+            setEditing(emptyProduct);
+          }}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0d6b3f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20"
         >
           <PackagePlus className="h-4 w-4" />
@@ -206,7 +223,10 @@ export default function AdminProductsPage() {
                 <Link href={`/products/${product.slug}`} className="rounded-xl p-2 text-neutral-500 hover:bg-[#eef5f1] hover:text-[#0d6b3f]" aria-label={`View ${product.name}`}>
                   <Eye className="h-4 w-4" />
                 </Link>
-                <button onClick={() => setEditing(product)} className="rounded-xl p-2 text-neutral-500 hover:bg-[#eef5f1] hover:text-[#0d6b3f]" type="button" aria-label={`Edit ${product.name}`}>
+                <button onClick={() => {
+                  void loadCategories();
+                  setEditing(product);
+                }} className="rounded-xl p-2 text-neutral-500 hover:bg-[#eef5f1] hover:text-[#0d6b3f]" type="button" aria-label={`Edit ${product.name}`}>
                   <Edit3 className="h-4 w-4" />
                 </button>
                 <button onClick={() => removeProduct(product.id)} className="rounded-xl p-2 text-neutral-500 hover:bg-red-50 hover:text-red-600" type="button" aria-label={`Delete ${product.name}`}>
@@ -278,7 +298,7 @@ export default function AdminProductsPage() {
                   onChange={(event) => setEditing({ ...editing, category: event.target.value })}
                   className="h-14 w-full rounded-2xl bg-[#f4f6f3] px-4 text-sm outline-none ring-1 ring-black/5"
                 >
-                  {categories.map((category) => (
+                  {categoryOptions.map((category) => (
                     <option key={category.id}>{category.name}</option>
                   ))}
                 </select>

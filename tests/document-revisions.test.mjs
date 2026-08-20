@@ -180,3 +180,15 @@ test("hero dropdowns keep their panel and link text readable against the glass n
   assert.match(styles, /\.navHero \.megaPanel\s*\{[\s\S]*?color:\s*var\(--ink\)/);
   assert.match(styles, /\.navHero \.megaLinks a\s*\{[\s\S]*?color:\s*var\(--ink\)/);
 });
+
+test("new categories persist with Supabase-generated IDs and appear in the product category selector", () => {
+  const categories = read("src/app/(admin)/admin/categories/page.tsx");
+  const products = read("src/app/(admin)/admin/products/page.tsx");
+
+  assert.match(categories, /id: editing\.id \|\| undefined/);
+  assert.match(categories, /if \(!response\.ok\) \{[\s\S]*?return;/);
+  assert.match(categories, /await loadCategories\(\)/);
+  assert.match(products, /category\.children\.map/);
+  assert.match(products, /cache: "no-store"/);
+  assert.match(products, /category_id: selectedCategory\?\.id/);
+});
