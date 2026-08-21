@@ -276,3 +276,14 @@ test("product pages tolerate incomplete dimension records from the live catalog"
   assert.match(detail, /const savedDimensions = \[/);
   assert.match(detail, /String\(value \?\? ""\)\.trim\(\)/);
 });
+
+test("admin product save gives visible in-editor feedback and handles request failures", () => {
+  const products = read("src/app/(admin)/admin/products/page.tsx");
+
+  assert.match(products, /const \[isSaving, setIsSaving\] = useState\(false\)/);
+  assert.match(products, /try \{[\s\S]*?await fetch\("\/api\/admin\/products"/);
+  assert.match(products, /catch \{[\s\S]*?setNotice\("Could not save the product/);
+  assert.match(products, /role="alert"/);
+  assert.match(products, /disabled=\{isSaving\}/);
+  assert.match(products, /isSaving \? "Saving\.\.\." : "Save Product"/);
+});

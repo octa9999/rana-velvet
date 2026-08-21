@@ -35,6 +35,7 @@ export default function AdminProductsPage() {
   const [editing, setEditing] = useState<AdminProduct | null>(null);
   const [categories, setCategories] = useState<AdminCategory[]>(adminCategories);
   const [notice, setNotice] = useState("");
+  const [isSaving, setIsSaving] = useState(false);
   const imageInputRef = useRef<HTMLInputElement | null>(null);
 
   const loadProducts = () =>
@@ -77,6 +78,11 @@ export default function AdminProductsPage() {
 
   const saveProduct = async () => {
     if (!editing) return;
+    if (!editing.name.trim()) {
+      setNotice("Product name is required before saving.");
+      return;
+    }
+
     const selectedCategory = categoryOptions.find((category) => category.name === editing.category);
     const normalized = {
       ...editing,
@@ -86,23 +92,30 @@ export default function AdminProductsPage() {
       images: editing.images?.length ? editing.images : parseImageUrls(editing.image),
       image: editing.images?.[0] || editing.image || "https://images.unsplash.com/photo-1555041469-a586c61ea9bc?w=800&q=80",
       reserved: editing.reserved || 0,
-      category_id: selectedCategory?.id,
+      category_id: selectedCategory?.id || null,
     };
-    const response = await fetch("/api/admin/products", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(normalized),
-    });
+    setIsSaving(true);
+    try {
+      const response = await fetch("/api/admin/products", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(normalized),
+      });
 
-    if (!response.ok) {
-      const payload = await response.json().catch(() => null);
-      setNotice(payload?.error || "Supabase rejected the product save. Please review the fields and try again.");
-      return;
+      if (!response.ok) {
+        const payload = await response.json().catch(() => null);
+        setNotice(payload?.error || "Supabase rejected the product save. Please review the fields and try again.");
+        return;
+      }
+
+      await loadProducts();
+      setNotice("Product saved to Supabase.");
+      setEditing(null);
+    } catch {
+      setNotice("Could not save the product. Check your connection and admin access, then try again.");
+    } finally {
+      setIsSaving(false);
     }
-
-    await loadProducts();
-    setNotice("Product saved to Supabase.");
-    setEditing(null);
   };
 
   const removeProduct = async (id: string) => {
@@ -150,6 +163,7 @@ export default function AdminProductsPage() {
         <button
           onClick={() => {
             void loadCategories();
+            setNotice("");
             setEditing(emptyProduct);
           }}
           className="inline-flex items-center justify-center gap-2 rounded-full bg-[#0d6b3f] px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-emerald-900/20"
@@ -225,6 +239,7 @@ export default function AdminProductsPage() {
                 </Link>
                 <button onClick={() => {
                   void loadCategories();
+                  setNotice("");
                   setEditing(product);
                 }} className="rounded-xl p-2 text-neutral-500 hover:bg-[#eef5f1] hover:text-[#0d6b3f]" type="button" aria-label={`Edit ${product.name}`}>
                   <Edit3 className="h-4 w-4" />
@@ -248,6 +263,7 @@ export default function AdminProductsPage() {
               </div>
               <button onClick={() => setEditing(null)} className="rounded-full border border-black/10 px-4 py-2 text-sm font-semibold">Close</button>
             </div>
+            {notice && <p role="alert" className="mb-4 rounded-xl bg-[#eef5f1] px-4 py-3 text-sm font-medium text-[#0d6b3f]">{notice}</p>}
 
             <div className="grid gap-4 sm:grid-cols-2">
               {[
@@ -348,8 +364,8 @@ export default function AdminProductsPage() {
                 Upload images via Supabase Storage
               </button>
               <input ref={imageInputRef} type="file" accept="image/*" className="hidden" onChange={uploadProductImage} />
-              <button onClick={saveProduct} className="rounded-2xl bg-[#0d6b3f] px-7 py-4 text-sm font-semibold text-white">
-                Save Product
+              <button disabled={isSaving} onClick={saveProduct} type="button" className="rounded-2xl bg-[#0d6b3f] px-7 py-4 text-sm font-semibold text-white disabled:cursor-not-allowed disabled:opacity-60">
+                {isSaving ? "Saving..." : "Save Product"}
               </button>
             </div>
           </div>
