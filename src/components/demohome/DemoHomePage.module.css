@@ -188,13 +188,12 @@
 }
 
 .hero {
-  min-height: 760px;
   background: #1b120c;
 }
 
 .heroStage {
   position: relative;
-  min-height: calc(100vh - 62px);
+  min-height: max(640px, 100vh);
   overflow: hidden;
 }
 

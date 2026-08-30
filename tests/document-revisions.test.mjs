@@ -356,3 +356,10 @@ test("shared section headings remain centered at every responsive breakpoint", (
   assert.match(styles, /\.sectionHead p\s*\{[\s\S]*?text-align:\s*center;/);
   assert.doesNotMatch(styles, /@media \(max-width: 980px\)[\s\S]*?\.sectionHead h1,\s*\.sectionHead h2\s*\{[\s\S]*?text-align:\s*left;/);
 });
+
+test("home hero uses one continuous stage without an empty background remainder", () => {
+  const styles = read("src/components/demohome/DemoHomePage.module.css");
+
+  assert.match(styles, /\.hero\s*\{\s*background:\s*#1b120c;\s*\}/);
+  assert.match(styles, /\.heroStage\s*\{[\s\S]*?min-height:\s*max\(640px,\s*100vh\);/);
+});
