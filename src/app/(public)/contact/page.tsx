@@ -148,7 +148,7 @@ export default function ContactPage() {
                   );
                 })}
               </div>
-              <a className={styles.secondaryPill} href={showroomMapUrl} target="_blank" rel="noreferrer" style={{ width: "100%", marginTop: 14 }}>
+              <a className={styles.mapLink} href={showroomMapUrl} target="_blank" rel="noreferrer" style={{ marginTop: 14 }}>
                 Open Location In Google Maps <ArrowRight size={15} />
               </a>
               <Link className={styles.secondaryPill} href="/consultation" style={{ width: "100%" }}>

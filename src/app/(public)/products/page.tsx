@@ -4,7 +4,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
+import { Heart, ShoppingBag } from "lucide-react";
 import { Header } from "@/components/layout/Header";
 import { Footer } from "@/components/layout/Footer";
 import { useCart } from "@/context/CartContext";
@@ -107,9 +107,6 @@ export default function ProductsPage() {
           <div className={styles.sectionHead}>
             <p>{filtered.length} pieces available. Explore the collection by room, material direction, and furnishing mood.</p>
             <h2>Collections</h2>
-            <Link className={styles.secondaryPill} href="/contact">
-              Talk With Us <ArrowRight size={15} />
-            </Link>
           </div>
 
           <div className={styles.toolbar}>

@@ -31,6 +31,7 @@ export default function CustomizeCurtainPage() {
     lining: "No lining",
     accessories: "No accessories",
     installation: "No",
+    budget: "",
     city: "",
     area: "",
     address: "",
@@ -62,6 +63,7 @@ export default function CustomizeCurtainPage() {
 Room: ${form.roomType}
 Measurements: ${form.width || "-"} x ${form.height || "-"} ${form.unit}; pieces: ${form.pieces}
 Fabric: ${form.fabric}; style: ${form.curtainStyle}; lining: ${form.lining}; accessories: ${form.accessories}; installation: ${form.installation}
+Budget: ${form.budget || "-"}
 Visit: ${form.date || "-"} ${form.time || "-"}
 Address: ${form.address || "-"}, ${form.area || "-"}, ${form.city || "-"}
 Notes: ${form.notes || "-"}`;
@@ -134,6 +136,7 @@ Notes: ${form.notes || "-"}`;
                     <label className={styles.field}><span>Lining</span><select value={form.lining} onChange={(e) => update("lining", e.target.value)}>{linings.map((item) => <option key={item}>{item}</option>)}</select></label>
                     <label className={styles.field}><span>Accessories Required</span><select value={form.accessories} onChange={(e) => update("accessories", e.target.value)}>{accessories.map((item) => <option key={item}>{item}</option>)}</select></label>
                     <label className={styles.field}><span>Installation required</span><select value={form.installation} onChange={(e) => update("installation", e.target.value)}><option>No</option><option>Yes</option></select></label>
+                    <label className={styles.field}><span>Approximate budget</span><input value={form.budget} onChange={(e) => update("budget", e.target.value)} placeholder="Optional" /></label>
                     <label className={styles.field}><span>Full name</span><input value={form.name} onChange={(e) => update("name", e.target.value)} /></label>
                     <label className={styles.field}><span>Phone/WhatsApp</span><input value={form.phone} onChange={(e) => update("phone", e.target.value)} /></label>
                     <label className={styles.field}><span>Email optional</span><input value={form.email} onChange={(e) => update("email", e.target.value)} /></label>

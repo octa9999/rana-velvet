@@ -19,7 +19,7 @@ const services = [
 const timeSlots = ["10:00", "11:00", "12:00", "14:00", "15:00", "16:00", "17:00", "18:00"];
 
 export default function ConsultationPage() {
-  const [form, setForm] = useState({ name: "", email: "", phone: "", date: "", time: "", service: "", message: "" });
+  const [form, setForm] = useState({ name: "", email: "", phone: "", date: "", time: "", service: "", budget: "", message: "" });
   const [status, setStatus] = useState("");
   const [success, setSuccess] = useState(false);
   const [submitting, setSubmitting] = useState(false);
@@ -33,7 +33,7 @@ export default function ConsultationPage() {
     const response = await fetch("/api/appointments", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ ...form, email: form.email || "no-email@ranavelvet.local" }),
+      body: JSON.stringify({ ...form, message: `Budget: ${form.budget || "-"}\n${form.message}`, email: form.email || "no-email@ranavelvet.local" }),
     });
 
     setSubmitting(false);
@@ -43,7 +43,7 @@ export default function ConsultationPage() {
       return;
     }
 
-    setForm({ name: "", email: "", phone: "", date: "", time: "", service: "", message: "" });
+    setForm({ name: "", email: "", phone: "", date: "", time: "", service: "", budget: "", message: "" });
     setSuccess(true);
     setStatus(`Your consultation request has been received. Reference ${referenceNumber("RV-CN")}. The requested time will be confirmed by the team.`);
   };
@@ -117,6 +117,10 @@ export default function ConsultationPage() {
                       <option key={slot} value={slot}>{slot}</option>
                     ))}
                   </select>
+                </label>
+                <label className={styles.field}>
+                  <span>Approximate budget</span>
+                  <input value={form.budget} onChange={(event) => setForm({ ...form, budget: event.target.value })} placeholder="Optional" />
                 </label>
                 <label className={`${styles.field} ${styles.wide}`}>
                   <span>Project details</span>

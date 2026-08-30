@@ -30,10 +30,10 @@ const fallbackNavItems: NavItem[] = [
     href: "/products",
     note: "Products and categories",
     subcategories: [
+      { name: "Ready-Made Curtains", href: "/products?category=Curtains" },
       { name: "Bedroom", href: "/products?category=Bedroom" },
       { name: "Living Room", href: "/products?category=Living%20Room" },
       { name: "Sofas & Seating", href: "/products?category=Seating" },
-      { name: "Ready-Made Curtains", href: "/products?category=Curtains" },
     ],
   },
   {
@@ -54,7 +54,7 @@ const fallbackNavItems: NavItem[] = [
       { name: "Sofas", href: "/custom-furniture?type=Sofa" },
       { name: "Beds", href: "/custom-furniture?type=Bed" },
       { name: "Tables", href: "/custom-furniture?type=Table" },
-      { name: "Book Consultation", href: "/consultation" },
+      { name: "Book A Consultation", href: "/consultation" },
     ],
   },
   {
@@ -65,26 +65,6 @@ const fallbackNavItems: NavItem[] = [
       { name: "Since 1960", href: "/about" },
       { name: "Explore Collection", href: "/products" },
       { name: "Contact Us", href: "/contact" },
-    ],
-  },
-  {
-    label: "Consultation",
-    href: "/consultation",
-    note: "Free design help",
-    subcategories: [
-      { name: "Room Styling", href: "/consultation" },
-      { name: "Curtain Planning", href: "/consultation" },
-      { name: "Store Visit", href: "/consultation" },
-    ],
-  },
-  {
-    label: "Contact",
-    href: "/contact",
-    note: "Direct support",
-    subcategories: [
-      { name: "Talk With Us", href: "/contact" },
-      { name: "Partner Program", href: "/partners" },
-      { name: "Cart", href: "/cart" },
     ],
   },
 ];
@@ -118,10 +98,17 @@ export function Header({ variant = "default" }: { variant?: "default" | "hero" }
         <div className={styles.megaPanel} style={{ opacity: 1, pointerEvents: "auto", transform: "translate(-50%, 8px)" }}>
           <div className={styles.megaLinks}>
             {fallbackNavItems.map((item) => (
-              <Link key={item.label} href={item.href} onClick={() => setMobileMenuOpen(false)}>
-                {item.label}
-                <ArrowRight size={13} />
-              </Link>
+              <div className={styles.mobileNavGroup} key={item.label}>
+                <Link href={item.href} onClick={() => setMobileMenuOpen(false)}>
+                  {item.label}
+                  <ArrowRight size={13} />
+                </Link>
+                {item.subcategories.map((sub) => (
+                  <Link className={styles.mobileSubLink} key={sub.name} href={sub.href} onClick={() => setMobileMenuOpen(false)}>
+                    {sub.name}
+                  </Link>
+                ))}
+              </div>
             ))}
             <Link href="/wishlist" onClick={() => setMobileMenuOpen(false)}>
               Wishlist
@@ -162,16 +149,16 @@ export function Header({ variant = "default" }: { variant?: "default" | "hero" }
 
       <div className={styles.navTools}>
         <Link className={styles.navTool} href="/products?search=1" aria-label="Search products">
-          <Search size={16} />
+          <Search size={14} />
           Search
         </Link>
         <Link className={styles.navTool} href="/wishlist">
-          <Heart size={16} />
+          <Heart size={14} />
           Wishlist
           {wishlistCount > 0 && <span className={styles.count}>{wishlistCount}</span>}
         </Link>
         <Link className={styles.navTool} href="/cart">
-          <ShoppingBag size={16} />
+          <ShoppingBag size={14} />
           Cart
           {cartCount > 0 && <span className={styles.count}>{cartCount}</span>}
         </Link>

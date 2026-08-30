@@ -287,3 +287,64 @@ test("admin product save gives visible in-editor feedback and handles request fa
   assert.match(products, /disabled=\{isSaving\}/);
   assert.match(products, /isSaving \? "Saving\.\.\." : "Save Product"/);
 });
+
+test("feedback navigation keeps only core links and prioritizes ready-made curtains in Shop", () => {
+  const header = read("src/components/layout/Header.tsx");
+
+  assert.match(header, /label: "Shop"[\s\S]*?Ready-Made Curtains[\s\S]*?Bedroom/);
+  assert.doesNotMatch(header, /label: "Consultation"/);
+  assert.doesNotMatch(header, /label: "Contact"/);
+  assert.doesNotMatch(header, /name: "Store Visit"/);
+  assert.match(header, /<Search size=\{14\} \/>/);
+  assert.match(header, /<Heart size=\{14\} \/>/);
+  assert.match(header, /<ShoppingBag size=\{14\} \/>/);
+  assert.match(header, /className=\{styles\.mobileSubLink\}/);
+});
+
+test("home feedback centers collections and process while simplifying the talk CTA", () => {
+  const home = read("src/components/demohome/DemoHomePage.tsx");
+  const styles = read("src/components/demohome/DemoHomePage.module.css");
+
+  assert.doesNotMatch(home, /<span>RV<\/span>/);
+  assert.match(styles, /\.sectionHead\s*\{[\s\S]*?justify-items:\s*center;/);
+  assert.match(styles, /\.sectionHead h2\s*\{[\s\S]*?text-align:\s*center;/);
+  assert.match(styles, /\.processGrid\s*\{[\s\S]*?width:\s*100%;/);
+  assert.match(styles, /\.processGrid h3\s*\{[\s\S]*?letter-spacing:\s*0;/);
+  assert.match(styles, /\.process > img\s*\{[\s\S]*?position:\s*relative;/);
+});
+
+test("collection listing removes the redundant Talk With Us CTA and centers page labels", () => {
+  const products = read("src/app/(public)/products/page.tsx");
+  const styles = read("src/styles/ecommerce.module.css");
+
+  assert.doesNotMatch(products, /Talk With Us/);
+  assert.match(styles, /\.heroKicker\s*\{[\s\S]*?text-align:\s*center;/);
+  assert.match(styles, /\.sectionHead h1,[\s\S]*?text-align:\s*center;/);
+});
+
+test("customization and consultation capture budget details for the admin team", () => {
+  const curtain = read("src/app/customize-curtain/page.tsx");
+  const consultation = read("src/app/(public)/consultation/page.tsx");
+
+  assert.match(curtain, /budget:\s*""/);
+  assert.match(curtain, /Approximate budget/);
+  assert.match(curtain, /Budget: \$\{form\.budget/);
+  assert.match(consultation, /budget:\s*""/);
+  assert.match(consultation, /Approximate budget/);
+  assert.match(consultation, /Budget: \$\{form\.budget/);
+});
+
+test("home footer keeps Maps as a secondary link", () => {
+  const footer = read("src/components/layout/HomeFooter.tsx");
+  const styles = read("src/components/demohome/DemoHomePage.module.css");
+
+  assert.match(footer, /className=\{styles\.footerMapLink\}/);
+  assert.match(styles, /\.footerMapLink\s*\{[\s\S]*?font-size:\s*0\.8em;/);
+});
+
+test("production type checking excludes stale development-only Next artifacts", () => {
+  const tsconfig = read("tsconfig.json");
+
+  assert.match(tsconfig, /"exclude":\s*\[[\s\S]*?"\.next\/dev"/);
+  assert.match(tsconfig, /"\.next\/types\/\*\*\/\*\.ts"/);
+});

@@ -13,7 +13,7 @@ export function HomeFooter() {
           selection of furniture that embodies timeless elegance.
         </p>
         <p>Talk To Us Through The Contact Form.</p>
-        <p><a href={showroomMapUrl} target="_blank" rel="noreferrer">Get Directions On Google Maps</a></p>
+        <p><a className={styles.footerMapLink} href={showroomMapUrl} target="_blank" rel="noreferrer">Get Directions On Google Maps</a></p>
       </div>
       <strong>Rana Velvet</strong>
       <div className={styles.footerLinks}>

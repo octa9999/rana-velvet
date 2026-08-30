@@ -214,7 +214,6 @@ export function DemoHomePage() {
         </div>
         <h2>Talk With Us</h2>
         <Link href="/contact" className={styles.centerPill}>
-          <span>RV</span>
           Talk Now
           <ArrowRight size={15} />
         </Link>

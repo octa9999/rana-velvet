@@ -402,8 +402,9 @@
 
 .sectionHead {
   display: grid;
-  grid-template-columns: 1fr 1.2fr 180px;
-  gap: 36px;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
+  gap: 18px;
   align-items: center;
   border-top: 1px solid rgba(255, 255, 255, 0.28);
   padding-top: 40px;
@@ -413,10 +414,11 @@
   max-width: 380px;
   font-size: 14px;
   line-height: 1.22;
+  text-align: center;
 }
 
 .sectionHead h2 {
-  text-align: right;
+  text-align: center;
 }
 
 .sectionHead a,
@@ -580,14 +582,13 @@
 }
 
 .process {
-  position: relative;
-  min-height: 780px;
   padding: 80px 24px 120px;
 }
 
 .processHead {
   display: grid;
-  grid-template-columns: 1fr 220px;
+  grid-template-columns: minmax(0, 1fr);
+  justify-items: center;
   align-items: start;
   gap: 30px;
 }
@@ -597,9 +598,9 @@
   z-index: 2;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 18px;
+  gap: 22px;
   margin-top: 80px;
-  width: 60%;
+  width: 100%;
 }
 
 .processGrid article {
@@ -613,14 +614,15 @@
 .processGrid span {
   color: #d7c7b8;
   font-size: 12px;
+  letter-spacing: 0;
 }
 
 .processGrid h3 {
-  margin-top: 94px;
+  margin-top: 64px;
   font-size: clamp(1.6rem, 2.5vw, 3rem);
   line-height: 1;
   font-weight: 500;
-  letter-spacing: -0.05em;
+  letter-spacing: 0;
 }
 
 .processGrid p {
@@ -631,13 +633,13 @@
 }
 
 .process > img {
-  position: absolute;
-  right: 24px;
-  bottom: 120px;
-  width: 34%;
+  position: relative;
+  display: block;
+  width: min(100%, 720px);
   height: 430px;
-  border-radius: 34px;
+  border-radius: 8px;
   object-fit: cover;
+  margin: 28px auto 0;
 }
 
 .talk {
@@ -680,6 +682,7 @@
   z-index: 4;
   left: 50%;
   margin-top: 8px;
+  padding: 12px 18px;
   transform: translateX(-50%);
 }
 
@@ -722,6 +725,14 @@
 
 .footerInfo p:nth-child(3) {
   text-align: right;
+}
+
+.footerMapLink {
+  color: rgba(17, 17, 17, 0.58);
+  font-size: 0.8em;
+  font-weight: 700;
+  text-decoration: underline;
+  text-underline-offset: 3px;
 }
 
 .footer strong {
