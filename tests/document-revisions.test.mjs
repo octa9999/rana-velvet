@@ -348,3 +348,11 @@ test("production type checking excludes stale development-only Next artifacts", 
   assert.match(tsconfig, /"exclude":\s*\[[\s\S]*?"\.next\/dev"/);
   assert.match(tsconfig, /"\.next\/types\/\*\*\/\*\.ts"/);
 });
+
+test("shared section headings remain centered at every responsive breakpoint", () => {
+  const styles = read("src/styles/ecommerce.module.css");
+
+  assert.match(styles, /\.sectionHead\s*\{[\s\S]*?grid-template-columns:\s*minmax\(0,\s*1fr\);[\s\S]*?justify-items:\s*center;/);
+  assert.match(styles, /\.sectionHead p\s*\{[\s\S]*?text-align:\s*center;/);
+  assert.doesNotMatch(styles, /@media \(max-width: 980px\)[\s\S]*?\.sectionHead h1,\s*\.sectionHead h2\s*\{[\s\S]*?text-align:\s*left;/);
+});
