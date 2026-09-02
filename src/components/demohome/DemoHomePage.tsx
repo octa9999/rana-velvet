@@ -206,12 +206,6 @@ export function DemoHomePage() {
       </section>
 
       <section className={styles.talk}>
-        <div className={styles.talkCopy}>
-          <p>
-            Embark on your interior design journey with a personalized
-            consultation tailored to your unique preferences and requirements.
-          </p>
-        </div>
         <h2>Talk With Us</h2>
         <Link href="/contact" className={styles.centerPill}>
           Talk Now

@@ -363,3 +363,12 @@ test("home hero uses one continuous stage without an empty background remainder"
   assert.match(styles, /\.hero\s*\{\s*background:\s*#1b120c;\s*\}/);
   assert.match(styles, /\.heroStage\s*\{[\s\S]*?min-height:\s*max\(640px,\s*100vh\);/);
 });
+
+test("demo product titles stay on one compact line and the Talk With Us intro is removed", () => {
+  const home = read("src/components/demohome/DemoHomePage.tsx");
+  const styles = read("src/components/demohome/DemoHomePage.module.css");
+
+  assert.doesNotMatch(home, /Embark on your interior design journey/);
+  assert.match(styles, /\.productInfo\s*\{[\s\S]*?grid-template-columns:\s*auto minmax\(0,\s*1fr\);/);
+  assert.match(styles, /\.productInfo strong\s*\{[\s\S]*?white-space:\s*nowrap;/);
+});
