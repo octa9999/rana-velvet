@@ -372,3 +372,12 @@ test("demo product titles stay on one compact line and the Talk With Us intro is
   assert.match(styles, /\.productInfo\s*\{[\s\S]*?grid-template-columns:\s*auto minmax\(0,\s*1fr\);/);
   assert.match(styles, /\.productInfo strong\s*\{[\s\S]*?white-space:\s*nowrap;/);
 });
+
+test("the mobile navigation locks background scrolling and scrolls inside its own panel", () => {
+  const header = read("src/components/layout/Header.tsx");
+  const styles = read("src/styles/ecommerce.module.css");
+
+  assert.match(header, /useEffect/);
+  assert.match(header, /document\.body\.style\.overflow\s*=\s*"hidden"/);
+  assert.match(styles, /\.mobileMenu \.megaPanel\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?overflow-y:\s*auto;[\s\S]*?overscroll-behavior:\s*contain;/);
+});

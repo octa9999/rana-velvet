@@ -1320,6 +1320,17 @@
   .mobileMenu {
     display: block;
   }
+  .mobileMenu .megaPanel {
+    position: fixed;
+    top: 72px;
+    right: 12px;
+    left: 12px;
+    width: auto;
+    max-height: calc(100dvh - 84px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    transform: none !important;
+  }
   .sectionHead,
   .contentGrid,
   .detailGrid,

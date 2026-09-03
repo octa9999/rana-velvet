@@ -3,7 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { ArrowRight, Heart, Menu, Search, ShoppingBag, X } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { useWishlist } from "@/context/WishlistContext";
@@ -76,6 +76,17 @@ export function Header({ variant = "default" }: { variant?: "default" | "hero" }
   const { items: wishlistItems } = useWishlist();
   const cartCount = cartItems.reduce((sum, item) => sum + item.quantity, 0);
   const wishlistCount = wishlistItems.length;
+
+  useEffect(() => {
+    if (!mobileMenuOpen) return;
+
+    const previousOverflow = document.body.style.overflow;
+    document.body.style.overflow = "hidden";
+
+    return () => {
+      document.body.style.overflow = previousOverflow;
+    };
+  }, [mobileMenuOpen]);
 
   return (
     <header className={`${styles.nav} ${variant === "hero" ? styles.navHero : ""}`}>
