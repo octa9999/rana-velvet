@@ -288,10 +288,10 @@ test("admin product save gives visible in-editor feedback and handles request fa
   assert.match(products, /isSaving \? "Saving\.\.\." : "Save Product"/);
 });
 
-test("feedback navigation keeps only core links and prioritizes ready-made curtains in Shop", () => {
+test("feedback navigation keeps only core links and a concise Shop dropdown", () => {
   const header = read("src/components/layout/Header.tsx");
 
-  assert.match(header, /label: "Shop"[\s\S]*?Ready-Made Curtains[\s\S]*?Bedroom/);
+  assert.match(header, /label: "Shop"[\s\S]*?Ready-Made Curtains[\s\S]*?Furniture/);
   assert.doesNotMatch(header, /label: "Consultation"/);
   assert.doesNotMatch(header, /label: "Contact"/);
   assert.doesNotMatch(header, /name: "Store Visit"/);
@@ -380,4 +380,18 @@ test("the mobile navigation locks background scrolling and scrolls inside its ow
   assert.match(header, /useEffect/);
   assert.match(header, /document\.body\.style\.overflow\s*=\s*"hidden"/);
   assert.match(styles, /\.mobileMenu \.megaPanel\s*\{[\s\S]*?position:\s*fixed;[\s\S]*?overflow-y:\s*auto;[\s\S]*?overscroll-behavior:\s*contain;/);
+});
+
+test("Shop offers only curtains and furniture while the home collection uses the live catalog", () => {
+  const header = read("src/components/layout/Header.tsx");
+  const home = read("src/components/demohome/DemoHomePage.tsx");
+  const styles = read("src/components/demohome/DemoHomePage.module.css");
+
+  assert.match(header, /label: "Shop"[\s\S]*?subcategories:\s*\[[\s\S]*?Ready-Made Curtains[\s\S]*?Furniture[\s\S]*?\]/);
+  assert.match(header, /\{ name: "Furniture", href: "\/products" \}/);
+  assert.doesNotMatch(header, /label: "Shop"[\s\S]*?name: "Bedroom"/);
+  assert.match(home, /fetch\("\/api\/catalog\/products"\)/);
+  assert.match(home, /setCollectionProducts\(payload\.products\.slice\(0, 6\)\)/);
+  assert.match(home, /collectionProducts\.map\(\(product\)/);
+  assert.match(styles, /\.sectionHead a\s*\{[\s\S]*?justify-self:\s*center;/);
 });

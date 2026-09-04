@@ -31,9 +31,7 @@ const fallbackNavItems: NavItem[] = [
     note: "Products and categories",
     subcategories: [
       { name: "Ready-Made Curtains", href: "/products?category=Curtains" },
-      { name: "Bedroom", href: "/products?category=Bedroom" },
-      { name: "Living Room", href: "/products?category=Living%20Room" },
-      { name: "Sofas & Seating", href: "/products?category=Seating" },
+      { name: "Furniture", href: "/products" },
     ],
   },
   {

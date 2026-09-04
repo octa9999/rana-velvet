@@ -420,7 +420,12 @@
   text-align: center;
 }
 
-.sectionHead a,
+.sectionHead a {
+  justify-self: center;
+  background: white;
+  color: var(--ink) !important;
+}
+
 .processHead a {
   justify-self: end;
   background: white;

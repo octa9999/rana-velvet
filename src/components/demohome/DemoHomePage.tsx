@@ -1,6 +1,9 @@
+"use client";
+
 /* eslint-disable @next/next/no-img-element */
 
 import Link from "next/link";
+import { useEffect, useState } from "react";
 import { ArrowRight, Heart, ShoppingBag } from "lucide-react";
 import { HomeFooter } from "@/components/layout/HomeFooter";
 import { Header } from "@/components/layout/Header";
@@ -8,50 +11,18 @@ import styles from "./DemoHomePage.module.css";
 
 const asset = (file: string) => `/demohome-zenspace/${file}`;
 
-const products = [
-  {
-    name: "Velvet Royale Bed",
-    slug: "velvet-royale-bed",
-    category: "Bedroom",
-    price: "Rs. 89,999",
-    image: "bedroom.jpg",
-  },
-  {
-    name: "Cloud Comfort Sofa",
-    slug: "cloud-comfort-sofa",
-    category: "Living Room",
-    price: "Rs. 129,999",
-    image: "living-room.jpg",
-  },
-  {
-    name: "Elite Ottoman",
-    slug: "elite-ottoman",
-    category: "Seating",
-    price: "Rs. 34,999",
-    image: "seating.jpg",
-  },
-  {
-    name: "Imperial Curtains",
-    slug: "imperial-curtains",
-    category: "Curtains",
-    price: "Rs. 12,999",
-    image: "curtains.jpg",
-  },
-  {
-    name: "Royal Armchair",
-    slug: "cloud-comfort-sofa",
-    category: "Seating",
-    price: "Rs. 54,999",
-    image: "hero-rana-chair.png",
-  },
-  {
-    name: "Prestige Dining Set",
-    slug: "cloud-comfort-sofa",
-    category: "Dining",
-    price: "Rs. 189,999",
-    image: "dining.jpg",
-  },
-];
+type CollectionProduct = {
+  id: string;
+  name: string;
+  slug: string;
+  category: string;
+  price: number;
+  image: string;
+};
+
+function formatPrice(price: number) {
+  return `Rs. ${price.toLocaleString("en-PK")}`;
+}
 
 const categories = [
   ["Bedroom", "Layered comfort and tailored sleeping spaces."],
@@ -69,6 +40,17 @@ const process = [
 ];
 
 export function DemoHomePage() {
+  const [collectionProducts, setCollectionProducts] = useState<CollectionProduct[]>([]);
+
+  useEffect(() => {
+    fetch("/api/catalog/products")
+      .then((response) => response.json())
+      .then((payload: { products?: CollectionProduct[] }) => {
+        if (Array.isArray(payload.products)) setCollectionProducts(payload.products.slice(0, 6));
+      })
+      .catch(() => setCollectionProducts([]));
+  }, []);
+
   return (
     <main className={styles.page}>
       <section className={styles.hero}>
@@ -138,11 +120,11 @@ export function DemoHomePage() {
         </div>
 
         <div className={styles.productGrid}>
-          {products.map((product) => (
-            <article key={product.name} className={styles.productCard}>
+          {collectionProducts.map((product) => (
+            <article key={product.id} className={styles.productCard}>
               <div className={styles.productMedia}>
                 <Link href={`/products/${product.slug}`} aria-label={`View ${product.name}`}>
-                  <img src={asset(product.image)} alt={product.name} />
+                  <img src={product.image} alt={product.name} />
                 </Link>
                 <div className={styles.productActions}>
                   <Link href="/wishlist" aria-label={`Save ${product.name} to wishlist`}>
@@ -153,7 +135,7 @@ export function DemoHomePage() {
                   </Link>
                 </div>
                 <div className={styles.productOverlay}>
-                  <span>{product.price}</span>
+                  <span>{formatPrice(product.price)}</span>
                   <small>{product.category}</small>
                 </div>
               </div>
