@@ -24,15 +24,6 @@ function formatPrice(price: number) {
   return `Rs. ${price.toLocaleString("en-PK")}`;
 }
 
-const categories = [
-  ["Bedroom", "Layered comfort and tailored sleeping spaces."],
-  ["Living Room", "Statement seating built for daily gathering."],
-  ["Sofas & Seating", "Soft proportions, velvet textures, ergonomic support."],
-  ["Ready-Made Curtains", "Drapery, sheers, and signature fabric finishes."],
-  ["Home Decor", "Tables, accents, and finishing pieces."],
-  ["Custom Furniture", "Made-to-measure pieces for distinctive rooms."],
-];
-
 const process = [
   ["01", "Consultation", "A focused design conversation around your room, materials, budget, and lifestyle."],
   ["02", "Material Edit", "Velvet, wood, upholstery, and finishing options are narrowed into a cohesive palette."],
@@ -41,15 +32,33 @@ const process = [
 
 export function DemoHomePage() {
   const [collectionProducts, setCollectionProducts] = useState<CollectionProduct[]>([]);
+  const [catalogProducts, setCatalogProducts] = useState<CollectionProduct[]>([]);
 
   useEffect(() => {
     fetch("/api/catalog/products")
       .then((response) => response.json())
       .then((payload: { products?: CollectionProduct[] }) => {
-        if (Array.isArray(payload.products)) setCollectionProducts(payload.products.slice(0, 6));
+        if (!Array.isArray(payload.products)) return;
+        setCatalogProducts(payload.products);
+        setCollectionProducts(payload.products.slice(0, 6));
       })
-      .catch(() => setCollectionProducts([]));
+      .catch(() => {
+        setCatalogProducts([]);
+        setCollectionProducts([]);
+      });
   }, []);
+
+  const activeCategories = Array.from(
+    catalogProducts.reduce((categories, product) => {
+      const name = product.category.trim();
+      if (!name) return categories;
+      categories.set(name, (categories.get(name) || 0) + 1);
+      return categories;
+    }, new Map<string, number>())
+  )
+    .map(([name, count]) => ({ name, count }))
+    .sort((left, right) => right.count - left.count)
+    .slice(0, 6);
 
   return (
     <main className={styles.page}>
@@ -158,10 +167,10 @@ export function DemoHomePage() {
           </p>
         </div>
         <div className={styles.categoryList}>
-          {categories.map(([name, description]) => (
-            <Link href="/products" key={name}>
-              <span>{name}</span>
-              <small>{description}</small>
+          {activeCategories.map((category) => (
+            <Link href={`/products?category=${encodeURIComponent(category.name)}`} key={category.name}>
+              <span>{category.name}</span>
+              <small>{`${category.count} ${category.count === 1 ? "piece" : "pieces"} available`}</small>
               <ArrowRight size={16} />
             </Link>
           ))}

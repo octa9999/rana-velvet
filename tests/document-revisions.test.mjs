@@ -395,3 +395,14 @@ test("Shop offers only curtains and furniture while the home collection uses the
   assert.match(home, /collectionProducts\.map\(\(product\)/);
   assert.match(styles, /\.sectionHead a\s*\{[\s\S]*?justify-self:\s*center;/);
 });
+
+test("home category rows are generated from live products and link to their matching shop filters", () => {
+  const home = read("src/components/demohome/DemoHomePage.tsx");
+
+  assert.doesNotMatch(home, /const categories = \[/);
+  assert.match(home, /setCatalogProducts\(payload\.products\)/);
+  assert.match(home, /catalogProducts\.reduce/);
+  assert.match(home, /sort\(\(left, right\) => right\.count - left\.count\)\s*\.slice\(0, 6\)/);
+  assert.match(home, /href=\{`\/products\?category=\$\{encodeURIComponent\(category\.name\)\}`\}/);
+  assert.match(home, /\$\{category\.count\} \$\{category\.count === 1 \? "piece" : "pieces"\} available/);
+});
